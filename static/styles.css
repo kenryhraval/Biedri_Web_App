@@ -1,0 +1,26 @@
+/* Custom CSS styles */
+
+.post {
+    background-color: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.post-header {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.post-header h5 {
+    margin-bottom: 0;
+}
+
+.post-header p {
+    margin-bottom: 0;
+    color: #777;
+}
+
+.post-body p {
+    margin-bottom: 0;
+}
