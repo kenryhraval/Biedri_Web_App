@@ -5,7 +5,7 @@ from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import login_required
+from helpers import login_required, error
 
 app = Flask(__name__)
 
@@ -17,11 +17,11 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure SQLite database
-DATABASE = os.path.join(os.path.dirname(__file__), "biedri.db")
+db = os.path.join(os.path.dirname(__file__), "biedri.db")
 
 # Function to get a database connection
 def get_db_connection():
-    conn = sqlite3.connect(DATABASE)
+    conn = sqlite3.connect(db)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -40,7 +40,6 @@ def after_request(response):
 def index():
     return render_template("index.html")
 
-
 @app.route('/profile')
 @login_required
 def profile():
@@ -55,8 +54,81 @@ def settings():
 def login():
     return render_template("login.html")
 
-@app.route('/register')
+@app.route('/register', methods=["GET", "POST"])
 def register():
+    if request.method == "POST":
+
+        username = request.form.get('username')
+        surname = request.form.get('surname')
+        name = request.form.get('name')
+        email = request.form.get('email')
+        region = request.form.get('region')
+        school = request.form.get('school')
+        password = request.form.get('password')
+        check = request.form.get('check')
+
+        if not name:
+            return error("must provide name", 400)
+
+        elif not surname:
+            return error("must provide surname", 400)
+
+        elif not username:
+            return error("must provide username", 400)
+
+        elif not email:
+            return error("must provide email", 400)
+        
+        elif not region:
+            return error("must provide region", 400)
+        
+        elif not school:
+            return error("must provide school", 400)
+        
+        elif not password or not check:
+            return error("must provide password", 400)
+  
+        elif password != check:
+            return error("passwords do not match", 400)
+
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+        except sqlite3.Error as e:
+            print(e)
+            return error(f'System error', 500)
+        
+
+        '''Using a UNIQUE constraint on the username and email columns 
+        is a good practice to enforce uniqueness. However, you're already 
+        checking for duplicate usernames and emails in your code before 
+        inserting into the database, which is redundant. You can rely on 
+        the database to enforce uniqueness with the constraint.'''
+        # try:
+        #     rows = cursor.execute("SELECT * FROM users WHERE username = ? OR email = ?", (username, email,))
+        #     if rows.fetchone():
+        #         return error("Username or email already taken", 400)
+        # except sqlite3.Error as e:
+        #     return error(f'System error', 500)
+        
+
+        hash = generate_password_hash(password)
+        
+        try:
+            cursor.execute("INSERT INTO users (name, surname, username, email, password, region, school) VALUES (?, ?, ?, ?, ?, ?, ?);",
+                                              (name, surname, username, email, hash,     region, school))
+            conn.commit()
+
+            user = cursor.execute("SELECT id FROM users WHERE username = ?", (username,)).fetchone()
+            session["user_id"] = user["id"]
+            return redirect("/")
+        
+        except sqlite3.Error as e:
+            print(e)
+            return error(f'Error: {e}', 500)
+        finally:
+            conn.close()
+        
     return render_template("register.html")
 
 

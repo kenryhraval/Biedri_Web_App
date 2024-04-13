@@ -5,12 +5,14 @@
 {% endblock %}
 
 {% block main %}
-<div class="form-containe">
+<div class="form-container">
+  <h2>Login Form</h2> 
+    <hr>
     <form class="needs-validation" novalidate action="/login" method="post">
         
         <div class="mb-3">
 
-            <label for="nameLogin">Username</label>
+            <!-- <label for="nameLogin">Username</label> -->
             <input autocomplete="off" id="nameLogin" autofocus class="form-control" name="username" placeholder="Username" type="text" required>
             
             <div class="valid-feedback">
@@ -25,7 +27,7 @@
 
         <div class="mb-3">
 
-            <label for="passwordLogin">Password</label>
+            <!-- <label for="passwordLogin">Password</label> -->
             <input class="form-control" id="passwordLogin" name="password" placeholder="Password" type="password" required>
             
             <div class="valid-feedback">

@@ -1,5 +1,14 @@
 /* Custom CSS styles */
 
+.form-container {
+    width: 50% !important; 
+    margin: 0 auto !important; 
+    padding: 20px !important;
+    border: 1px solid #ccc !important;
+    border-radius: 5px !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1) !important;
+}
+
 .post {
     background-color: #f9f9f9;
     padding: 15px;

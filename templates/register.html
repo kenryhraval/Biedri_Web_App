@@ -5,58 +5,84 @@
 {% endblock %}
 
 {% block main %}  
-<div class="form-containe">
+<div class="form-container">
+    <h2>Registration Form</h2> 
+    <hr>
     <form class="needs-validation" novalidate action="/register" method="post">
-        <div class="mb-3">
-            <label for="validationCustom01">First name</label>
-            <input type="text"  class="form-control" id="validationCustom01" placeholder="First name" value="" required>
-            <div class="valid-feedback">
-                Looks good!
+        
+        <div class="form-row">
+            <div class="col-md-6 mb-3">
+                <!-- <label for="validationCustom01">First name</label> -->
+                <input type="text" name="name" class="form-control" id="validationCustom01" placeholder="First name" value="" required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <!-- <label for="validationCustom02">Last name</label> -->
+                <input type="text"name="surname" class="form-control" id="validationCustom02" placeholder="Last name" value="" required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
             </div>
         </div>
         
-        <div class="mb-3">
-            <label for="validationCustom02">Last name</label>
-            <input type="text" class="form-control" id="validationCustom02" placeholder="Last name" value="" required>
-            <div class="valid-feedback">
-                Looks good!
-            </div>
-        </div>
 
         <div class="mb-3">
-            <label for="validationCustomUsername">Username</label>
+            <!-- <label for="validationCustomUsername">Email</label> -->
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="inputGroupPrepend">@</span>
                 </div>
-                <input type="text" class="form-control" id="validationCustomUsername" placeholder="Username" required>
+                <input type="email" name="email" class="form-control" id="validationCustomUsername" placeholder="Email" required>
+                <div class="invalid-feedback">
+                    Please enter an email.
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroupPrepend">#</span>
+                </div>
+                <input type="text" name="username" class="form-control" id="validationCustomUsername" placeholder="Username" required>
                 <div class="invalid-feedback">
                     Please choose a username.
                 </div>
             </div>
         </div>
 
-        <div class="mb-3">
-            <label for="validationCustom03">City</label>
-            <input type="text" class="form-control" id="validationCustom03" placeholder="City" required>
-            <div class="invalid-feedback">
-                Please provide a valid city.
+        <label for="regionschool">Note that the app is meant only for the citizens of Latvia.</label>
+        <div class="form-row" id="regionschool">
+            
+            <div class="col-md-6 mb-3">
+                <input type="text" name="region" class="form-control" id="validationCustom03" placeholder="Region" required>
+                <div class="invalid-feedback">
+                    Please provide a valid region.
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <input type="text" name="school" class="form-control" id="validationCustom04" placeholder="School" required>
+                <div class="invalid-feedback">
+                    Please provide a valid school.
+                </div>
             </div>
         </div>
 
-        <div class="mb-3">
-            <label for="validationCustom04">State</label>
-            <input type="text" class="form-control" id="validationCustom04" placeholder="State" required>
+        <div class="col-md-6 mb-3">
+            <input type="text" name="password" class="form-control" id="validationCustom04" placeholder="Create Password" required>
             <div class="invalid-feedback">
-                Please provide a valid state.
+                Please provide a password.
             </div>
         </div>
 
-        <div class="mb-3">
-            <label for="validationCustom05">Zip</label>
-            <input type="text" class="form-control" id="validationCustom05" placeholder="Zip" required>
+        <div class="col-md-6 mb-3">
+            <input type="text" name="check" class="form-control" id="validationCustom04" placeholder="Repeat Password" required>
             <div class="invalid-feedback">
-                Please provide a valid zip.
+                Please provide a password.
             </div>
         </div>
 
