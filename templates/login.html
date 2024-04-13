@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+{% block main %}
+<div class="form-containe">
+    <form class="needs-validation" novalidate action="/login" method="post">
+        
+        <div class="mb-3">
+
+            <label for="nameLogin">Username</label>
+            <input autocomplete="off" id="nameLogin" autofocus class="form-control" name="username" placeholder="Username" type="text" required>
+            
+            <div class="valid-feedback">
+                Looks good!
+            </div>
+
+            <div class="invalid-feedback">
+                Please provide a username.
+            </div>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label for="passwordLogin">Password</label>
+            <input class="form-control" id="passwordLogin" name="password" placeholder="Password" type="password" required>
+            
+            <div class="valid-feedback">
+                Looks good!
+            </div>
+
+            <div class="invalid-feedback">
+                Please provide a password.
+            </div>
+
+        </div>
+
+        <button class="btn btn-primary" type="submit">Log In</button>
+    </form>
+</div>
+
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function() {
+      'use strict';
+      window.addEventListener('load', function() {
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.getElementsByClassName('needs-validation');
+        // Loop over them and prevent submission
+        var validation = Array.prototype.filter.call(forms, function(form) {
+          form.addEventListener('submit', function(event) {
+            if (form.checkValidity() === false) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+          }, false);
+        });
+      }, false);
+    })();
+ </script>
+{% endblock %}
