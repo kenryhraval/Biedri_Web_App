@@ -4,6 +4,7 @@ import sqlite3
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 
 from helpers import login_required, error
 
@@ -19,11 +20,23 @@ Session(app)
 # Configure SQLite database
 db = os.path.join(os.path.dirname(__file__), "biedri.db")
 
+
+# manage picture files
+UPLOAD_FOLDER = 'static/files'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 # Function to get a database connection
 def get_db_connection():
     conn = sqlite3.connect(db)
     conn.row_factory = sqlite3.Row
     return conn
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # this decorator ensures that responses from your Flask 
 # application are not cached by clients or intermediary caches
@@ -40,6 +53,47 @@ def after_request(response):
 def index():
     return render_template("index.html")
 
+@app.route('/create', methods=['GET', 'POST'])
+@login_required
+def create():
+    if request.method == "POST":
+        name = request.form.get('name')
+        description = request.form.get('description')
+        category = request.form.get('category')
+
+        if not name:
+            return error("Must provide name", 400)
+        elif not description:
+            return error("Must provide description", 400)
+        elif not category:
+            return error("Must provide category", 400)
+
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute("INSERT INTO clubs (name, description, category, leader_id,) VALUES (?, ?, ?, ?)",
+                                              (name, description, category, session["user_id"],))
+            conn.commit()
+            return redirect("/") 
+        except sqlite3.Error as e:
+            print(e)
+            return error("Error creating club", 500)
+        finally:
+            conn.close()
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        categories = [row['category'] for row in cursor.execute("SELECT category FROM categories").fetchall()]
+        return render_template("create.html", categories=categories)
+    except sqlite3.Error as e:
+        print(e)
+        return error("System error", 500)
+    finally:
+        conn.close()
+    
+
+
 @app.route('/profile')
 @login_required
 def profile():
@@ -48,6 +102,16 @@ def profile():
 @app.route('/settings')
 @login_required
 def settings():
+    if request.method == 'POST':
+        picture = request.files.get('photo') # get the picture
+        if not picture:
+            return error("Must provide picture", 400)
+        elif not allowed_file(picture.filename):
+            return error("Invalid file type", 400)
+        
+        filename = secure_filename(picture.filename)
+        picture.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
     return render_template("settings.html")
 
 @app.route('/login', methods=['GET', 'POST'])
