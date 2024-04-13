@@ -50,8 +50,41 @@ def profile():
 def settings():
     return render_template("settings.html")
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
+    session.clear()
+
+    if request.method == "POST":
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if not username:
+            return error("Must provide username", 400)
+
+        elif not password:
+            return error("Must provide password", 400)
+
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+        except sqlite3.Error as e:
+            print(e)
+            return error(f'System error', 500)
+
+        try:
+            rows = cursor.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
+            if not check_password_hash(rows["password"], password):
+                return error("Invalid username and/or password", 400)
+
+            session["user_id"] = rows["id"]
+            return redirect("/")
+        
+        except sqlite3.Error as e:
+            return error(f'Error: {e}', 500)
+        
+        finally:
+            conn.close()
+
     return render_template("login.html")
 
 @app.route('/register', methods=["GET", "POST"])
@@ -95,7 +128,6 @@ def register():
             conn = get_db_connection()
             cursor = conn.cursor()
         except sqlite3.Error as e:
-            print(e)
             return error(f'System error', 500)
         
 
@@ -124,12 +156,16 @@ def register():
             return redirect("/")
         
         except sqlite3.Error as e:
-            print(e)
             return error(f'Error: {e}', 500)
         finally:
             conn.close()
         
     return render_template("register.html")
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect("/")
 
 
 if __name__ == '__main__':
