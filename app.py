@@ -61,13 +61,30 @@ def index():
     finally:
         conn.close()
 
-@app.route('/club/<int:club_id>')
+@app.route('/club/<int:club_id>', methods=['GET', 'POST'])
 def club_details(club_id):
+    if request.method == 'POST':
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute("INSERT INTO applications (club_id, app_id) VALUES (?, ?)",
+                                                     (club_id, session["user_id"],))
+            conn.commit()
+            return redirect("/") 
+        except sqlite3.Error as e:
+            return error(f"{e}", 500)
+        finally:
+            conn.close()
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
         club = cursor.execute("SELECT * FROM clubs WHERE id = ?", (club_id,)).fetchone()
-        return render_template('club.html', club=club)
+        
+        applications = cursor.execute("SELECT * FROM applications WHERE app_id = ? AND club_id = ?", (session["user_id"], club_id,)).fetchone()
+        applied = bool(applications)
+
+
+        return render_template('club.html', club=club, applied=applied)
     except sqlite3.Error as e:
         return error(f"{e}", 500)
     finally:
