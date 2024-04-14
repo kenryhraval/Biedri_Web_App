@@ -5,17 +5,28 @@
 {% endblock %}
 
 {% block main %}
+<div class="center-50">
+    <h2>Explore Clubs</h2> 
+    <hr>
     {% for item in items %}
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Philosophy Enthusiasts</h5>
-                        <p class="card-text">Join us for deep discussions on philosophy and existentialism.</p>
-                        <a href="#" class="btn btn-primary">More info</a>
-                    </div>
+        <a href="/club/{{ item['id'] }}">
+            <div class="card card text-white bg-dark mb-3 ">
+                <div class="category-box">{{ item["category"] }}</div>
+                <img class="card-img-top" src="
+                {% if item['photo'] is none %}
+                    static/files/jive-sgroup-default-portrait-large.png
+                {% else %}
+                    {{ item['photo'] }}
+                {% endif %}
+                " alt="Card image cap">
+                <div class="card-body" >
+                    <h5 class="card-title">{{ item["name"] }}</h5>
+                    <p class="card-text">{{ amount }} fellows</p>
+                    <p class="card-text"><small class="text-muted">{{ item["school"] }}</small></p>
+                    
                 </div>
-            </div>   
-        </div>
-    {%endfor%}
+            </div>
+        </a>
+    {% endfor %}
+</div>
 {% endblock %}

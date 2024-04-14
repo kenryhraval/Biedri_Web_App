@@ -51,7 +51,28 @@ def after_request(response):
 @app.route('/')
 @login_required
 def index():
-    return render_template("index.html")
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        items = cursor.execute("SELECT * FROM clubs").fetchall()
+        return render_template("index.html", items=items)
+    except sqlite3.Error as e:
+        return error(f"{e}", 500)
+    finally:
+        conn.close()
+
+@app.route('/club/<int:club_id>')
+def club_details(club_id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        club = cursor.execute("SELECT * FROM clubs WHERE id = ?", (club_id,)).fetchone()
+        return render_template('club.html', club=club)
+    except sqlite3.Error as e:
+        return error(f"{e}", 500)
+    finally:
+        conn.close()
+
 
 @app.route('/create', methods=['GET', 'POST'])
 @login_required
@@ -71,13 +92,12 @@ def create():
         try:
             conn = get_db_connection()
             cursor = conn.cursor()
-            cursor.execute("INSERT INTO clubs (name, description, category, leader_id,) VALUES (?, ?, ?, ?)",
+            cursor.execute("INSERT INTO clubs (name, description, category, leader_id) VALUES (?, ?, ?, ?)",
                                               (name, description, category, session["user_id"],))
             conn.commit()
             return redirect("/") 
         except sqlite3.Error as e:
-            print(e)
-            return error("Error creating club", 500)
+            return error(f"{e}", 500)
         finally:
             conn.close()
 
@@ -87,8 +107,7 @@ def create():
         categories = [row['category'] for row in cursor.execute("SELECT category FROM categories").fetchall()]
         return render_template("create.html", categories=categories)
     except sqlite3.Error as e:
-        print(e)
-        return error("System error", 500)
+        return error(f"{e}", 500)
     finally:
         conn.close()
     
