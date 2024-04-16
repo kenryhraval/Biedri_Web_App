@@ -11,18 +11,14 @@
     <form class="needs-validation" novalidate action="/create" method="post">
           
         <div class="mb-3">
-  
             <!-- <label for="nameLogin">Username</label> -->
             <input autocomplete="off" id="nameLogin" autofocus class="form-control" name="name" placeholder="Name of the Club" type="text" required>
-            
             <div class="valid-feedback">
                 Looks good!
             </div>
-
             <div class="invalid-feedback">
                 Please provide a name.
             </div>
-  
         </div>
           
         <div class="form-group">
@@ -35,10 +31,20 @@
             <div class="invalid-feedback">Please choose a category.</div>
         </div>
 
+        <div class="mb-3">
+            <!-- <label for="validationTextarea">About</label> -->
+            <textarea class="form-control" name="goal" id="validationTextarea" placeholder="Goal of the club" required></textarea>
+            <div class="invalid-feedback">
+                Please provide a goal.
+            </div>
+            <div class="valid-feedback">
+                Looks good!
+            </div>
+        </div>
 
         <div class="mb-3">
             <!-- <label for="validationTextarea">About</label> -->
-            <textarea class="form-control" name="description" id="validationTextarea" placeholder="Description of the club" required></textarea>
+            <textarea style="height: 200px;" class="form-control" name="description" id="validationTextarea" placeholder="Description of the club" required></textarea>
             <div class="invalid-feedback">
                 Please provide a despription.
             </div>
@@ -46,6 +52,17 @@
                 Looks good!
             </div>
         </div>
+
+        <div class="mb-3">
+            <input autocomplete="off" class="form-control" name="school" placeholder="Place of Action" type="text" required>
+            <div class="valid-feedback">
+                Looks good!
+            </div>
+            <div class="invalid-feedback">
+                Please provide a school.
+            </div>
+        </div>
+          
 
         <div class="form-group">
             <div class="form-check">

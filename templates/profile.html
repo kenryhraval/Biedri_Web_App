@@ -1,9 +1,28 @@
 {% extends "layout.html" %}
 
+{% block additional_head %}
+
+{% endblock %}
+
 {% block title %}
     Profile
 {% endblock %}
 
 {% block main %}
+<div class="without-underline">
+    <h2>{{user["name"]}} {{user["surname"]}}</h2> 
+    <hr>
+    <div class="overflow-scroll">
+        <div class="row flex-row flex-nowrap">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card card-block">
+                    
+                </div>
+            </div>
+        </div>
     
+    </div>
+</div>
+
+
 {% endblock %}
