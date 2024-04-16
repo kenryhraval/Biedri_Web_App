@@ -98,19 +98,25 @@ def create():
         name = request.form.get('name')
         description = request.form.get('description')
         category = request.form.get('category')
+        goal = request.form.get('goal')
+        school = request.form.get('school')
 
         if not name:
-            return error("Must provide name", 400)
+            return error("Must provide a name", 400)
         elif not description:
-            return error("Must provide description", 400)
+            return error("Must provide a description", 400)
         elif not category:
-            return error("Must provide category", 400)
+            return error("Must provide a category", 400)
+        elif not goal:
+            return error("Must provide a goal", 400)
+        elif not school:
+            return error("Must provide a school", 400)
 
         try:
             conn = get_db_connection()
             cursor = conn.cursor()
-            cursor.execute("INSERT INTO clubs (name, description, category, leader_id) VALUES (?, ?, ?, ?)",
-                                              (name, description, category, session["user_id"],))
+            cursor.execute("INSERT INTO clubs (name, description, category, leader_id, school, goal) VALUES (?, ?, ?, ?, ?, ?)",
+                                              (name, description, category, session["user_id"], school, goal))
             conn.commit()
             return redirect("/") 
         except sqlite3.Error as e:
@@ -133,7 +139,19 @@ def create():
 @app.route('/profile')
 @login_required
 def profile():
-    return render_template("profile.html")
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        user = cursor.execute("SELECT * FROM users WHERE id = ?", (session["user_id"],)).fetchone()
+        joined = cursor.execute("SELECT * FROM users WHERE id = ?", (session["user_id"],)).fetchone()
+        owned = cursor.execute("SELECT * FROM clubs WHERE leader_id = ?", (session["user_id"],)).fetchall()
+
+        return render_template("profile.html", user=user, joined = joined, owned = owned)
+    except sqlite3.Error as e:
+        return error(f"{e}", 500)
+    finally:
+        conn.close()
+    
 
 @app.route('/settings')
 @login_required
