@@ -143,7 +143,15 @@ def profile():
         conn = get_db_connection()
         cursor = conn.cursor()
         user = cursor.execute("SELECT * FROM users WHERE id = ?", (session["user_id"],)).fetchone()
-        joined = cursor.execute("SELECT * FROM users WHERE id = ?", (session["user_id"],)).fetchone()
+        joined = cursor.execute("""
+                                    SELECT c.* 
+                                    FROM clubs c 
+                                    JOIN members m ON c.id = m.club_id 
+                                    WHERE m.user_id = ?
+                                """, (session["user_id"],)).fetchall()
+        
+        print(joined)
+
         owned = cursor.execute("SELECT * FROM clubs WHERE leader_id = ?", (session["user_id"],)).fetchall()
 
         return render_template("profile.html", user=user, joined = joined, owned = owned)
