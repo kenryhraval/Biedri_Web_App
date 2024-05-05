@@ -18,7 +18,7 @@
                     {% if item['photo'] is none %}
                         static\files\jive-sgroup-default-portrait-large.png
                     {% else %}
-                        {{ item['photo'] }}
+                        static\{{ item['photo'] }}
                     {% endif %}
                     " alt="Card image cap">
                     <div class="card-body" >

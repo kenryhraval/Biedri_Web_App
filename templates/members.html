@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Settings
+{% endblock %}
+
+{% block main %}
+
+<div class="space-below">
+    <h2>Members</h2> 
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Role</th>
+                <th>Date</th>
+                <th>Profile</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for member in members %}
+                <tr>
+                    <td>{{ member["name"] }}</td>
+                    <td>{{ member["surname"] }}</td>
+                    <td>{{ member["role"] }}</td>
+                    <td>{{ member["date"] }}</td>
+                    <td><a href="{{ url_for('profile', user_id=member['id']) }}">Profile</a></td>
+                    <td>
+                        <form action="/modify_members" method="post">
+                            <input type="hidden" name="member_id" value="{{ member['user_id'] }}">
+                            <input type="hidden" name="action" value="remove">
+                            <input type="hidden" name="club" value="{{ member['club_id'] }}">
+                            <button type="submit" class="btn btn-link">
+                                <img src="{{ url_for('static', filename='files/remove-user.png') }}" class="img-member">
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="space-below">
+    <h2>Applications</h2> 
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Date</th>
+                <th>Profile</th>
+                <th>Accept</th>
+                <th>Reject</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for application in applications %}
+                <tr>
+                    <td>{{ application["name"] }}</td>
+                    <td>{{ application["surname"] }}</td>
+                    <td>{{ application["date"] }}</td>
+                    <td><a href="{{ url_for('profile', user_id=application['id']) }}">Profile</a></td>
+                    <td>
+                        <form action="/modify_members" method="post">
+                            <input type="hidden" name="member_id" value="{{ application['app_id'] }}">
+                            <input type="hidden" name="action" value="accept">
+                            <input type="hidden" name="club" value="{{ application['club_id'] }}">
+                            <button type="submit" class="btn btn-link">
+                                <img src="{{ url_for('static', filename='files/accept.png') }}" class="img-member">
+                            </button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/modify_members" method="post">
+                            <input type="hidden" name="member_id" value="{{ application['app_id'] }}">
+                            <input type="hidden" name="action" value="reject">
+                            <input type="hidden" name="club" value="{{ application['club_id'] }}">
+                            <button type="submit" class="btn btn-link">
+                                <img src="{{ url_for('static', filename='files/cross.png') }}" class="img-member">
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

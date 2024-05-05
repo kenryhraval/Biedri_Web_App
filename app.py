@@ -5,6 +5,9 @@ from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
+from datetime import datetime
+from flask import url_for
+
 
 from helpers import login_required, error
 
@@ -70,7 +73,7 @@ def club_details(club_id):
             cursor.execute("INSERT INTO applications (club_id, app_id) VALUES (?, ?)",
                                                      (club_id, session["user_id"],))
             conn.commit()
-            return redirect("/") 
+            return redirect(url_for('club_details', club_id=club_id))
         except sqlite3.Error as e:
             return error(f"{e}", 500)
         finally:
@@ -83,8 +86,11 @@ def club_details(club_id):
         applications = cursor.execute("SELECT * FROM applications WHERE app_id = ? AND club_id = ?", (session["user_id"], club_id,)).fetchone()
         applied = bool(applications)
 
+        members = cursor.execute("SELECT * FROM members WHERE club_id = ? AND user_id = ?", (club_id, session["user_id"],)).fetchone()
+        member = bool(members)
 
-        return render_template('club.html', club=club, applied=applied)
+
+        return render_template('club.html', club=club, applied=applied, member = member)
     except sqlite3.Error as e:
         return error(f"{e}", 500)
     finally:
@@ -133,8 +139,128 @@ def create():
         return error(f"{e}", 500)
     finally:
         conn.close()
-    
 
+@app.route('/edit_club', methods=['POST'])
+def edit_club():
+    # Extract form data
+    club_id = request.form['club_id']
+    name = request.form['name']
+    category = request.form['category']
+    goal = request.form['goal']
+    description = request.form['description']
+    school = request.form['school']
+
+    if not name:
+        return error("Must provide a name", 400)
+    elif not description:
+        return error("Must provide a description", 400)
+    elif not category:
+        return error("Must provide a category", 400)
+    elif not goal:
+        return error("Must provide a goal", 400)
+    elif not school:
+        return error("Must provide a school", 400)
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+                    
+        # Update club details in the database
+        cursor.execute("UPDATE clubs SET name=?, category=?, goal=?, description=?, school=? WHERE id=?", 
+                        (name, category, goal, description, school, club_id))
+        conn.commit()
+        
+        return redirect("/profile")
+        
+    except sqlite3.Error as e:
+        return error(f"{e}", 500)
+    finally:
+        conn.close()
+
+@app.route('/edit', methods=['POST'])
+def edit():  
+    try:
+        club_id = request.form['club']
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        club = cursor.execute("SELECT * FROM clubs WHERE id = ?", (club_id,)).fetchone()
+        categories = [row['category'] for row in cursor.execute("SELECT category FROM categories").fetchall()]
+        print(club_id)
+        return render_template('edit.html', club=club, categories = categories)
+
+    except sqlite3.Error as e:
+        return error(f"{e}", 500)
+    finally:
+        conn.close()
+
+@app.route('/modify_members', methods=['POST'])
+def modify_members():
+    member = request.form['member_id']
+    action = request.form['action']
+    club_id = request.form['club']
+    print(member)
+    print(action)
+    print(club_id)
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        if action == 'accept':
+            cursor.execute("INSERT INTO members (user_id, club_id, date, role) VALUES (?, ?, ?, ?)", (member, club_id, date, "default"))
+            cursor.execute("DELETE FROM applications WHERE app_id = ? AND club_id = ?", (member, club_id, ))
+        elif action == 'reject':
+            cursor.execute("DELETE FROM applications WHERE app_id = ? AND club_id = ?", (member, club_id, ))
+        elif action == 'remove':
+            cursor.execute("DELETE FROM members WHERE user_id = ? AND club_id = ?", (member, club_id, ))
+        conn.commit()
+
+        return redirect(url_for('members', club_id=club_id), code=307)
+    except sqlite3.Error as e:
+        return error(f"{e}", 500)
+    finally:
+        conn.close()
+
+@app.route('/members', methods=['POST'])
+def members():   
+    try:
+        club_id = request.form['club']
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        club = cursor.execute("SELECT * FROM clubs WHERE id = ?", (club_id,)).fetchone()
+        
+        applications = cursor.execute("""
+            SELECT 
+                applications.*, 
+                users.* 
+            FROM 
+                applications 
+            INNER JOIN 
+                users ON applications.app_id = users.id 
+            WHERE 
+                applications.club_id = ?""", (club_id,)).fetchall()
+
+        
+
+        members = cursor.execute("""
+            SELECT 
+                members.*, 
+                users.* 
+            FROM 
+                members 
+            INNER JOIN 
+                users ON members.user_id = users.id 
+            WHERE 
+                members.club_id = ?""", (club_id,)).fetchall()
+
+
+
+        return render_template('members.html', club=club, applications = applications, members = members)
+    except sqlite3.Error as e:
+        return error(f"{e}", 500)
+    finally:
+        conn.close()
 
 @app.route('/profile')
 @login_required
@@ -150,7 +276,6 @@ def profile():
                                     WHERE m.user_id = ?
                                 """, (session["user_id"],)).fetchall()
         
-        print(joined)
 
         owned = cursor.execute("SELECT * FROM clubs WHERE leader_id = ?", (session["user_id"],)).fetchall()
 
@@ -160,7 +285,6 @@ def profile():
     finally:
         conn.close()
     
-
 @app.route('/settings')
 @login_required
 def settings():
@@ -194,7 +318,6 @@ def login():
             conn = get_db_connection()
             cursor = conn.cursor()
         except sqlite3.Error as e:
-            print(e)
             return error(f'System error', 500)
 
         try:
