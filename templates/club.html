@@ -13,7 +13,7 @@
         {% if club['photo'] is none %}
             {{ url_for('static', filename='files/jive-sgroup-default-portrait-large.png') }}
         {% else %}
-            {{ url_for('static', filename=club['photo']) }}
+            {{ url_for('static', filename='files/' + club['photo']) }}
         {% endif %}
         " alt="Card image cap">
         <h2>{{ club["name"] }}</h2> 
@@ -35,7 +35,7 @@
                 <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list"><strong>This full description:</strong> "{{ club["description"] }}"</div>
                 <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">
                     {% if member is true %}
-                        <strong>You are a member since  </strong>
+                        <strong>You are a member since</strong> {{ members["date"] }} 
                     {% else %}
                         {% if applied is false %}
                         <form action="/club/{{ club['id'] }}" method="post">

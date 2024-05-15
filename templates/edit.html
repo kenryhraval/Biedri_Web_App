@@ -8,67 +8,50 @@
 <div class="form-container">
     <h2>Edit Club</h2> 
     <hr>
-    <form class="needs-validation" novalidate action="/edit_club" method="post">
-
+    
+    <form class="needs-validation" novalidate action="/edit_club" method="post" enctype="multipart/form-data">
         <input type="hidden" name="club_id" value="{{ club['id'] }}">
-
+        
         <div class="mb-3">
-            <!-- <label for="nameLogin">Username</label> -->
-            <input autocomplete="off" id="nameLogin" autofocus class="form-control" name="name" value="{{club['name']}}" type="text" required>
-            <div class="valid-feedback">
-                Looks good!
-            </div>
-            <div class="invalid-feedback">
-                Please provide a name.
-            </div>
+            <!-- <label for="photo">Upload Photo</label> -->
+            <input type="file" class="form-control-file" id="photo" name="photo">
         </div>
-          
-        <div class="form-group">
-            <select name="category" class="custom-select" required>
+        <div class="mb-3">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ club['name'] }}" required>
+            <div class="invalid-feedback">Please provide a name.</div>
+        </div>
+        <div class="mb-3">
+            <label for="category">Category</label>
+            <select class="form-control" id="category" name="category" required>
                 <option selected>{{ club['category'] }}</option>
                 {% for category in categories %}
                     {% if category != club['category'] %}
-                        <option>{{category}}</option>
+                        <option>{{ category }}</option>
                     {% endif %}
                 {% endfor %}
             </select>
             <div class="invalid-feedback">Please choose a category.</div>
         </div>
-
         <div class="mb-3">
-            <!-- <label for="validationTextarea">About</label> -->
-            <textarea class="form-control" name="goal" id="validationTextarea" required>{{ club['goal'] }}</textarea>
-            <div class="invalid-feedback">
-                Please provide a goal.
-            </div>
-            <div class="valid-feedback">
-                Looks good!
-            </div>
+            <label for="goal">Goal</label>
+            <textarea class="form-control" id="goal" name="goal" required>{{ club['goal'] }}</textarea>
+            <div class="invalid-feedback">Please provide a goal.</div>
         </div>
-
         <div class="mb-3">
-            <!-- <label for="validationTextarea">About</label> -->
-            <textarea style="height: 200px;" class="form-control" name="description" id="validationTextarea" required>{{club['description']}}</textarea>
-            <div class="invalid-feedback">
-                Please provide a despription.
-            </div>
-            <div class="valid-feedback">
-                Looks good!
-            </div>
+            <label for="description">Description</label>
+            <textarea class="form-control" id="description" name="description" required>{{ club['description'] }}</textarea>
+            <div class="invalid-feedback">Please provide a description.</div>
         </div>
-
         <div class="mb-3">
-            <input autocomplete="off" class="form-control" name="school" value="{{club['school']}}" type="text" required>
-            <div class="valid-feedback">
-                Looks good!
-            </div>
-            <div class="invalid-feedback">
-                Please provide a school.
-            </div>
+            <label for="school">School</label>
+            <input type="text" class="form-control" id="school" name="school" value="{{ club['school'] }}" required>
+            <div class="invalid-feedback">Please provide a school.</div>
         </div>
-  
+        
         <button class="btn btn-primary" type="submit">Save Changes</button>
-      </form>
+    </form>
+    
   </div>
   
   <script>

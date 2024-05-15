@@ -1,5 +1,13 @@
 /* Custom CSS styles */
 
+.mb-3 label {
+    text-align: left;
+    display: block;
+    font-style: italic;
+    font-weight: 900;
+}
+
+
 .space-below {
     margin-bottom: 100px !important;
 }

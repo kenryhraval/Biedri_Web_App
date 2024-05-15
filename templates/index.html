@@ -15,15 +15,16 @@
                 <div class="card text-white bg-dark ">
                     <div class="category-box">{{ item["category"] }}</div>
                     <img class="card-img-top" src="
-                    {% if item['photo'] is none %}
-                        static\files\jive-sgroup-default-portrait-large.png
+                    {% if item['photo'] is none or item['photo'] == '' %}
+                        {{ url_for('static', filename='files/jive-sgroup-default-portrait-large.png') }}
                     {% else %}
-                        static\{{ item['photo'] }}
+                        {{ url_for('static', filename='files/' + item['photo']) }}
                     {% endif %}
+
                     " alt="Card image cap">
                     <div class="card-body" >
                         <h5 class="card-title">{{ item["name"] }}</h5>
-                        <p class="card-text">{{ amount }} fellows</p>
+                        <p class="card-text">{{ item["amount"] }} fellows</p>
                         <p class="card-text"><small class="text-muted">{{ item["school"] }}</small></p>
                     </div>
                 </div>

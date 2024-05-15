@@ -19,9 +19,9 @@
                     <div class="card text-white bg-dark h-100">
                         <img class="card-img-top" src="
                             {% if club['photo'] is none %}
-                                static\files\jive-sgroup-default-portrait-large.png
+                                {{ url_for('static', filename='files/jive-sgroup-default-portrait-large.png') }}
                             {% else %}
-                                static\{{ club['photo'] }}
+                                {{ url_for('static', filename='files/' + club['photo']) }}
                             {% endif %}
                         " alt="Card image cap">
                         <div class="card-body">

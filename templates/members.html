@@ -29,14 +29,18 @@
                     <td>{{ member["date"] }}</td>
                     <td><a href="{{ url_for('profile', user_id=member['id']) }}">Profile</a></td>
                     <td>
-                        <form action="/modify_members" method="post">
-                            <input type="hidden" name="member_id" value="{{ member['user_id'] }}">
-                            <input type="hidden" name="action" value="remove">
-                            <input type="hidden" name="club" value="{{ member['club_id'] }}">
-                            <button type="submit" class="btn btn-link">
-                                <img src="{{ url_for('static', filename='files/remove-user.png') }}" class="img-member">
-                            </button>
-                        </form>
+                        {% if member["role"] != "leader" %}
+                            <form action="/modify_members" method="post">
+                                <input type="hidden" name="member_id" value="{{ member['user_id'] }}">
+                                <input type="hidden" name="action" value="remove">
+                                <input type="hidden" name="club" value="{{ member['club_id'] }}">
+                                <button type="submit" class="btn btn-link">
+                                    <img src="{{ url_for('static', filename='files/remove-user.png') }}" class="img-member">
+                                </button>
+                            </form>
+                        {% else %}
+                            <img src="{{ url_for('static', filename='files/star.png') }}" class="img-member">
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}

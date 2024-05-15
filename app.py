@@ -8,7 +8,6 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 from flask import url_for
 
-
 from helpers import login_required, error
 
 app = Flask(__name__)
@@ -57,7 +56,13 @@ def index():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        items = cursor.execute("SELECT * FROM clubs").fetchall()
+        query = """
+            SELECT clubs.*, 
+                   (SELECT COUNT(*) FROM members WHERE members.club_id = clubs.id) AS amount
+            FROM clubs
+            WHERE clubs.id NOT IN (SELECT club_id FROM members WHERE user_id = ?)
+        """
+        items = cursor.execute(query, (session["user_id"],)).fetchall()
         return render_template("index.html", items=items)
     except sqlite3.Error as e:
         return error(f"{e}", 500)
@@ -85,12 +90,13 @@ def club_details(club_id):
         
         applications = cursor.execute("SELECT * FROM applications WHERE app_id = ? AND club_id = ?", (session["user_id"], club_id,)).fetchone()
         applied = bool(applications)
-
+        
         members = cursor.execute("SELECT * FROM members WHERE club_id = ? AND user_id = ?", (club_id, session["user_id"],)).fetchone()
         member = bool(members)
 
 
-        return render_template('club.html', club=club, applied=applied, member = member)
+
+        return render_template('club.html', club=club, applied=applied, member = member, members = members)
     except sqlite3.Error as e:
         return error(f"{e}", 500)
     finally:
@@ -121,8 +127,22 @@ def create():
         try:
             conn = get_db_connection()
             cursor = conn.cursor()
-            cursor.execute("INSERT INTO clubs (name, description, category, leader_id, school, goal) VALUES (?, ?, ?, ?, ?, ?)",
-                                              (name, description, category, session["user_id"], school, goal))
+            
+            # Insert the new club into the clubs table
+            cursor.execute("""
+                INSERT INTO clubs (name, description, category, leader_id, school, goal) 
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (name, description, category, session["user_id"], school, goal))
+
+             # Get the id of the newly inserted club
+            club_id = cursor.lastrowid
+
+            # Insert the current user as a member with the role "leader"
+            cursor.execute("""
+                INSERT INTO members (user_id, club_id, date, role) 
+                VALUES (?, ?, datetime('now'), ?)
+            """, (session["user_id"], club_id, "leader"))
+
             conn.commit()
             return redirect("/") 
         except sqlite3.Error as e:
@@ -141,41 +161,68 @@ def create():
         conn.close()
 
 @app.route('/edit_club', methods=['POST'])
+@login_required
 def edit_club():
-    # Extract form data
-    club_id = request.form['club_id']
-    name = request.form['name']
-    category = request.form['category']
-    goal = request.form['goal']
-    description = request.form['description']
-    school = request.form['school']
-
-    if not name:
-        return error("Must provide a name", 400)
-    elif not description:
-        return error("Must provide a description", 400)
-    elif not category:
-        return error("Must provide a category", 400)
-    elif not goal:
-        return error("Must provide a goal", 400)
-    elif not school:
-        return error("Must provide a school", 400)
-    
     try:
+        # Extract form data
+        club_id = request.form['club_id']
+        name = request.form['name']
+        category = request.form['category']
+        goal = request.form['goal']
+        description = request.form['description']
+        school = request.form['school']
+        photo = request.files.get('photo')  # Use .get() to safely get the file input
+
+        # Logging for debugging
+        print(f"Received form data: club_id={club_id}, name={name}, category={category}, goal={goal}, description={description}, school={school}")
+        if photo:
+            print(f"Received file: {photo.filename}")
+        
+        if not name:
+            return error("Must provide a name", 400)
+        elif not description:
+            return error("Must provide a description", 400)
+        elif not category:
+            return error("Must provide a category", 400)
+        elif not goal:
+            return error("Must provide a goal", 400)
+        elif not school:
+            return error("Must provide a school", 400)
+        
         conn = get_db_connection()
         cursor = conn.cursor()
-                    
+
         # Update club details in the database
-        cursor.execute("UPDATE clubs SET name=?, category=?, goal=?, description=?, school=? WHERE id=?", 
-                        (name, category, goal, description, school, club_id))
+        cursor.execute("""
+            UPDATE clubs 
+            SET name=?, category=?, goal=?, description=?, school=?
+            WHERE id=?
+        """, (name, category, goal, description, school, club_id))
+        
+        # Handle photo upload if a file is provided
+        if photo and allowed_file(photo.filename):
+            # photo_filename = secure_filename(photo.filename)
+            photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo.filename)
+            photo.save(photo_path)
+            cursor.execute("""
+                UPDATE clubs 
+                SET photo=? 
+                WHERE id=?
+            """, (photo.filename, club_id))
+        elif photo:
+            return error("Invalid file type", 400)
+
         conn.commit()
         
         return redirect("/profile")
         
     except sqlite3.Error as e:
         return error(f"{e}", 500)
+    except Exception as e:
+        return error(f"Unexpected error: {e}", 500)
     finally:
         conn.close()
+
 
 @app.route('/edit', methods=['POST'])
 def edit():  
@@ -185,7 +232,6 @@ def edit():
         cursor = conn.cursor()
         club = cursor.execute("SELECT * FROM clubs WHERE id = ?", (club_id,)).fetchone()
         categories = [row['category'] for row in cursor.execute("SELECT category FROM categories").fetchall()]
-        print(club_id)
         return render_template('edit.html', club=club, categories = categories)
 
     except sqlite3.Error as e:
@@ -198,9 +244,7 @@ def modify_members():
     member = request.form['member_id']
     action = request.form['action']
     club_id = request.form['club']
-    print(member)
-    print(action)
-    print(club_id)
+
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
