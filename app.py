@@ -172,11 +172,6 @@ def edit_club():
         description = request.form['description']
         school = request.form['school']
         photo = request.files.get('photo')  # Use .get() to safely get the file input
-
-        # Logging for debugging
-        print(f"Received form data: club_id={club_id}, name={name}, category={category}, goal={goal}, description={description}, school={school}")
-        if photo:
-            print(f"Received file: {photo.filename}")
         
         if not name:
             return error("Must provide a name", 400)
@@ -201,14 +196,14 @@ def edit_club():
         
         # Handle photo upload if a file is provided
         if photo and allowed_file(photo.filename):
-            # photo_filename = secure_filename(photo.filename)
-            photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo.filename)
+            photo_filename = secure_filename(photo.filename)
+            photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
             photo.save(photo_path)
             cursor.execute("""
                 UPDATE clubs 
                 SET photo=? 
                 WHERE id=?
-            """, (photo.filename, club_id))
+            """, (photo_filename, club_id))
         elif photo:
             return error("Invalid file type", 400)
 
@@ -332,8 +327,60 @@ def profile():
 @login_required
 def settings():
     if request.method == 'POST':
-        # Handle form submission here
-        pass
+        username = request.form.get('username')
+        surname = request.form.get('surname')
+        name = request.form.get('name')
+        email = request.form.get('email')
+        region = request.form.get('region')
+        school = request.form.get('school')
+        photo = request.files.get('photo')
+
+        if not name:
+            return error("must provide name", 400)
+
+        elif not surname:
+            return error("must provide surname", 400)
+
+        elif not username:
+            return error("must provide username", 400)
+
+        elif not email:
+            return error("must provide email", 400)
+        
+        elif not region:
+            return error("must provide region", 400)
+        
+        elif not school:
+            return error("must provide school", 400)
+        
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+
+            date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+            cursor.execute("UPDATE users SET name=?, surname=?, username=?, email=?, region=?, school=?, last_edited=? WHERE id=?", (name, surname, username, email, region, school, date, session["user_id"],))
+            
+            # Handle photo upload if a file is provided
+            if photo and allowed_file(photo.filename):
+                photo_filename = secure_filename(photo.filename)
+                photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
+                photo.save(photo_path)
+                cursor.execute("""
+                    UPDATE users 
+                    SET photo=? 
+                    WHERE id=?
+                """, (photo_filename, session["user_id"]))
+            elif photo:
+                return error("Invalid file type", 400)
+            
+            conn.commit()
+
+            return redirect(url_for('index'))
+        except sqlite3.Error as e:
+            return error(f"{e}", 500)
+        finally:
+            conn.close()
 
     try:
         conn = get_db_connection()
@@ -345,8 +392,6 @@ def settings():
         return error(f"{e}", 500)
     finally:
         conn.close()
-
-    
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
