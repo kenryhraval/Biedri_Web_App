@@ -7,7 +7,7 @@
 {% block main %}
 
 <div class="space-below">
-    <h2>Members</h2> 
+    <h4>MEMBERS</h4> 
 
     <table class="table table-striped">
         <thead>
@@ -49,8 +49,11 @@
 </div>
 
 <div class="space-below">
-    <h2>Applications</h2> 
-
+    <h4>APPLICATIONS</h4> 
+    {% if not aplications %}
+    <p>YOU HAVE NO PENDING APPLICATIONS...</p>
+    <p><em>Your club is visible for other users <strong><a href="/">here</a></strong> </em></p> 
+    {% else %}
     <table class="table table-striped">
         <thead>
             <tr>
@@ -93,6 +96,7 @@
             {% endfor %}
         </tbody>
     </table>
+    {% endif %}
 </div>
 
 {% endblock %}
