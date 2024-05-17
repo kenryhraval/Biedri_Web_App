@@ -12,11 +12,16 @@
 <div class="without-underline">
     <h2>{{user["name"]}} {{user["surname"]}}</h2>
     <hr>
+    <h4>YOUR MEMBERSHIP IN CLUBS</h4>
+    {% if not joined %}
+        <p>YOU HAVE NOT JOINED A CLUB YET...</p>
+        <p><em>Feel free to find clubs of your interest <strong><a href="/">here</a></strong> </em></p> 
+    {% else %}
     <div class="overflow-auto">
         <div class="row flex-nowrap">
             {% for club in joined %}
                 <a href="/club/{{ club['id'] }} " class="col-md-4 mb-3">
-                    <div class="card text-white bg-dark h-100">
+                    <div class="card text-white bg-dark">
                         <img class="card-img-top" src="
                             {% if club['photo'] is none %}
                                 {{ url_for('static', filename='files/jive-sgroup-default-portrait-large.png') }}
@@ -25,46 +30,54 @@
                             {% endif %}
                         " alt="Card image cap">
                         <div class="card-body">
-                            <h5 class="card-title">{{ club["name"] }}</h5>
-                            <p class="card-text"><small class="text-muted">{{ club["school"] }}</small></p>
+                            <h5 class="card-title text-truncate-1-line">{{ club["name"] }}</h5>
+                            <p class="card-text text-truncate-1-line"><small class="text-muted ">{{ club["school"] }}</small></p>
                         </div>
                     </div>
                 </a>
             {% endfor %}
         </div>
     </div>
+    {% endif %}
     
     <div class="manage-container">
-        <h2>Manage Clubs</h2> 
+        <hr>
+        <h4>YOUR LEADERSHIP IN CLUBS</h4>
         <div class="manage-clubs">
-            {% for club in owned %}    
-                <div class="club-row row">
-                    
-                    <div class="col-9">
-                        <h5 class="card-title">{{ club["name"] }}</h5>
-                    </div>
-
-                    <div class="col-2">
-                        <form action="/members" method="post">
-                            <input type="hidden" name="club" value="{{ club['id'] }}">
-                            <button type="submit" class="btn btn-link">
-                                <img src="static\files\983470-200.png" class="img-edit">
-                            </button>
-                        </form>
+            
+            {% if not owned %}
+            <p>YOU HAVE NOT CREATED A CLUB YET...</p> 
+            <p><em>Feel free to create clubs of your interest <strong><a href="/create">here</a></strong> </em></p> 
+            {% else %} 
+                {% for club in owned %}    
+                    <div class="club-row row">
                         
-                    </div>
+                        <div class="col-9 ">
+                            <h5 class="card-title text-truncate-1-line">{{ club["name"] }}</h5>
+                        </div>
 
-                    <div class="col-1">
-                        <form action="/edit" method="post">
-                            <input type="hidden" name="club" value="{{ club['id'] }}">
-                            <button type="submit" class="btn btn-link">
-                                <img src="static\files\32355.png" class="img-edit">
-                            </button>
-                        </form>
-                    </div>
+                        <div class="col-2">
+                            <form action="/members" method="post">
+                                <input type="hidden" name="club" value="{{ club['id'] }}">
+                                <button type="submit" class="btn btn-link">
+                                    <img src="static\files\983470-200.png" class="img-edit">
+                                </button>
+                            </form>
+                            
+                        </div>
 
-                </div>
-            {% endfor %}
+                        <div class="col-1">
+                            <form action="/edit" method="post">
+                                <input type="hidden" name="club" value="{{ club['id'] }}">
+                                <button type="submit" class="btn btn-link">
+                                    <img src="static\files\32355.png" class="img-edit">
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            {% endif %}  
         </div>
     </div>
 </div>

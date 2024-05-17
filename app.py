@@ -223,7 +223,6 @@ def edit_club():
     finally:
         conn.close()
 
-
 @app.route('/edit', methods=['POST'])
 def edit():  
     try:
@@ -329,20 +328,25 @@ def profile():
     finally:
         conn.close()
     
-@app.route('/settings')
+@app.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
     if request.method == 'POST':
-        picture = request.files.get('photo') # get the picture
-        if not picture:
-            return error("Must provide picture", 400)
-        elif not allowed_file(picture.filename):
-            return error("Invalid file type", 400)
-        
-        filename = secure_filename(picture.filename)
-        picture.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        # Handle form submission here
+        pass
 
-    return render_template("settings.html")
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        user = cursor.execute("SELECT * FROM users WHERE id = ?", (session["user_id"],)).fetchone()  # Corrected syntax
+        return render_template("settings.html", user=user)
+
+    except sqlite3.Error as e:
+        return error(f"{e}", 500)
+    finally:
+        conn.close()
+
+    
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

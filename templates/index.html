@@ -13,7 +13,7 @@
         <div class="col-md-4 mb-3">
             <a href="/club/{{ item['id'] }}">
                 <div class="card text-white bg-dark ">
-                    <div class="category-box">{{ item["category"] }}</div>
+                    <div class="category-box text-truncate-1-line">{{ item["category"] }}</div>
                     <img class="card-img-top" src="
                     {% if item['photo'] is none or item['photo'] == '' %}
                         {{ url_for('static', filename='files/jive-sgroup-default-portrait-large.png') }}
@@ -23,9 +23,16 @@
 
                     " alt="Card image cap">
                     <div class="card-body" >
-                        <h5 class="card-title">{{ item["name"] }}</h5>
-                        <p class="card-text">{{ item["amount"] }} fellows</p>
-                        <p class="card-text"><small class="text-muted">{{ item["school"] }}</small></p>
+                        <h5 class="card-title text-truncate-1-line">{{ item["name"] }}</h5>
+                        <p class="card-text text-truncate-1-line">
+                            {{ item["amount"] }} 
+                            {% if item["amount"] != 1 %}
+                            fellows
+                            {% else %}
+                            fellow
+                            {% endif %}
+                            <small class="text-muted ">@ {{ item["school"] }}</small>
+                        </p>
                     </div>
                 </div>
             </a>
