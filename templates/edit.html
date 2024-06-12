@@ -15,9 +15,9 @@
         <div class="mb-3 d-flex align-items-center">
             <div class="profile-picture-container mr-4">
                 <img src="{% if club['photo'] is none %}
-                                {{ url_for('static', filename='files/jive-sgroup-default-portrait-large.png') }}
+                                {{ url_for('static', filename='files/club_profile_pictures/jive-sgroup-default-portrait-large.png') }}
                             {% else %}
-                                {{ url_for('static', filename='files/' + club['photo']) }}
+                                {{ url_for('static', filename='files/club_profile_pictures/' + club['photo']) }}
                             {% endif %}" 
                     alt="Profile Picture" class="profile-picture">
                 <input type="file" id="photo" name="photo" accept="image/*" class="profile-picture-input">

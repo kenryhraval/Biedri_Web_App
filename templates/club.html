@@ -9,13 +9,32 @@
 {% endblock %}
 
 {% block main %}
-        <img class="card-img-top" src="
-        {% if club['photo'] is none %}
-            {{ url_for('static', filename='files/jive-sgroup-default-portrait-large.png') }}
-        {% else %}
-            {{ url_for('static', filename='files/' + club['photo']) }}
-        {% endif %}
-        " alt="Card image cap">
+        <div style="position: relative;">
+            <img class="card-img-top" src="
+            {% if club['photo'] is none %}
+                {{ url_for('static', filename='files/club_profile_pictures/jive-sgroup-default-portrait-large.png') }}
+            {% else %}
+                {{ url_for('static', filename='files/club_profile_pictures/' + club['photo']) }}
+            {% endif %}
+            " alt="Card image cap">
+
+            <form action="/favourite" method="post">
+                <input type="hidden" name="club" value="{{ club['id'] }}">
+                <input type="hidden" name="slug" value="{{ club['slug'] }}">
+                <button type="submit" class="btn btn-link favourite-button">
+                    <div class="favourite-box">
+                        <img class="favourite-star" id="favourite-star-{{ club['id'] }}" src="
+                        {% if favourites %}
+                            {{ url_for('static', filename='files/system_pictures/favorite_is.png') }}
+                        {% else %}
+                            {{ url_for('static', filename='files/system_pictures/favorite.png') }}
+                        {% endif %}">
+                    </div>
+                </button>
+            </form>
+            
+        </div>
+
         <h2>{{ club["name"] }}</h2> 
         <hr>
         

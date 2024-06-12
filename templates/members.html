@@ -27,7 +27,7 @@
                     <td>{{ member["surname"] }}</td>
                     <td>{{ member["role"] }}</td>
                     <td>{{ member["date"] }}</td>
-                    <td><a href="{{ url_for('profile', user_id=member['id']) }}">Profile</a></td>
+                    <td><a href="{{ url_for('profile', slug=member['slug']) }}">Profile</a></td>
                     <td>
                         {% if member["role"] != "leader" %}
                             <form action="/modify_members" method="post">
@@ -35,11 +35,11 @@
                                 <input type="hidden" name="action" value="remove">
                                 <input type="hidden" name="club" value="{{ member['club_id'] }}">
                                 <button type="submit" class="btn btn-link">
-                                    <img src="{{ url_for('static', filename='files/remove-user.png') }}" class="img-member">
+                                    <img src="{{ url_for('static', filename='files/system_pictures/remove-user.png') }}" class="img-member">
                                 </button>
                             </form>
                         {% else %}
-                            <img src="{{ url_for('static', filename='files/star.png') }}" class="img-member">
+                            <img src="{{ url_for('static', filename='files/system_pictures/star.png') }}" class="img-member">
                         {% endif %}
                     </td>
                 </tr>
@@ -71,14 +71,14 @@
                     <td>{{ application["name"] }}</td>
                     <td>{{ application["surname"] }}</td>
                     <td>{{ application["date"] }}</td>
-                    <td><a href="{{ url_for('profile', user_id=application['id']) }}">Profile</a></td>
+                    <td><a href="{{ url_for('profile', slug=application['slug']) }}">Profile</a></td>
                     <td>
                         <form action="/modify_members" method="post">
                             <input type="hidden" name="member_id" value="{{ application['app_id'] }}">
                             <input type="hidden" name="action" value="accept">
                             <input type="hidden" name="club" value="{{ application['club_id'] }}">
                             <button type="submit" class="btn btn-link">
-                                <img src="{{ url_for('static', filename='files/accept.png') }}" class="img-member">
+                                <img src="{{ url_for('static', filename='files/system_pictures/accept.png') }}" class="img-member">
                             </button>
                         </form>
                     </td>
@@ -88,7 +88,7 @@
                             <input type="hidden" name="action" value="reject">
                             <input type="hidden" name="club" value="{{ application['club_id'] }}">
                             <button type="submit" class="btn btn-link">
-                                <img src="{{ url_for('static', filename='files/cross.png') }}" class="img-member">
+                                <img src="{{ url_for('static', filename='files/system_pictures/cross.png') }}" class="img-member">
                             </button>
                         </form>
                     </td>

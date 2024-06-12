@@ -1,5 +1,11 @@
 from flask import redirect, render_template, session
 from functools import wraps
+import re
+from uuid import uuid4
+
+def generate_slug(name):
+    slug = re.sub(r'\W+', '-', name.lower()).strip('-')
+    return f"{slug}-{uuid4().hex[:6]}"
 
 def login_required(f):
     """

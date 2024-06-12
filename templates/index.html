@@ -11,14 +11,14 @@
     <div class="row">
         {% for item in items %}
         <div class="col-md-4 mb-3">
-            <a href="/club/{{ item['id'] }}">
+            <a href="{{ url_for('club_details', slug=item['slug']) }}">
                 <div class="card text-white bg-dark ">
                     <div class="category-box text-truncate-1-line">{{ item["category"] }}</div>
                     <img class="card-img-top" src="
                     {% if item['photo'] is none or item['photo'] == '' %}
-                        {{ url_for('static', filename='files/jive-sgroup-default-portrait-large.png') }}
+                        {{ url_for('static', filename='files/club_profile_pictures/jive-sgroup-default-portrait-large.png') }}
                     {% else %}
-                        {{ url_for('static', filename='files/' + item['photo']) }}
+                        {{ url_for('static', filename='files/club_profile_pictures/' + item['photo']) }}
                     {% endif %}
 
                     " alt="Card image cap">

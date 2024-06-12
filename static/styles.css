@@ -5,6 +5,10 @@
     background-color: rgb(216, 134, 2);
 }
 
+html {
+    overflow-y: scroll; /* Always show vertical scrollbar */
+}
+
 /* FOR PROFILE PICTURES via ChatGPT */
 .profile-picture-container {
     width: 100px;
@@ -186,8 +190,25 @@ h4 {
     background-color: rgba(0, 0, 0, 0.5);
     color: #fff;
     padding: 5px 10px;
-    border-top-right-radius: 5px;
-    border-bottom-left-radius: 5px;
+    border-top-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+.favourite-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 5px;
+    background-color: rgba(255, 253, 253, 0.5);
+    border-top-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    width: 50px;
+    height: 50px;
+}
+
+.favourite-star {
+    width: 100%;
+    height: auto;
 }
 
 

@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 from flask import url_for
 
-from helpers import login_required, error
+from helpers import login_required, error, generate_slug
 
 app = Flask(__name__)
 
@@ -28,6 +28,9 @@ UPLOAD_FOLDER = 'static/files'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+CLUB_PROFILE_PICTURES = os.path.join(app.config['UPLOAD_FOLDER'], 'club_profile_pictures')
+USER_PROFILE_PICTURES = os.path.join(app.config['UPLOAD_FOLDER'], 'user_profile_pictures')
+
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -69,39 +72,68 @@ def index():
     finally:
         conn.close()
 
-@app.route('/club/<int:club_id>', methods=['GET', 'POST'])
-def club_details(club_id):
-    if request.method == 'POST':
-        try:
-            conn = get_db_connection()
-            cursor = conn.cursor()
-            cursor.execute("INSERT INTO applications (club_id, app_id) VALUES (?, ?)",
-                                                     (club_id, session["user_id"],))
-            conn.commit()
-            return redirect(url_for('club_details', club_id=club_id))
-        except sqlite3.Error as e:
-            return error(f"{e}", 500)
-        finally:
-            conn.close()
+@app.route('/favourite', methods=['POST'])
+@login_required
+def favourite():
     try:
+        club_id = request.form['club']
+        slug = request.form['slug']
         conn = get_db_connection()
         cursor = conn.cursor()
-        club = cursor.execute("SELECT * FROM clubs WHERE id = ?", (club_id,)).fetchone()
-        
-        applications = cursor.execute("SELECT * FROM applications WHERE app_id = ? AND club_id = ?", (session["user_id"], club_id,)).fetchone()
-        applied = bool(applications)
-        
-        members = cursor.execute("SELECT * FROM members WHERE club_id = ? AND user_id = ?", (club_id, session["user_id"],)).fetchone()
-        member = bool(members)
-
-
-
-        return render_template('club.html', club=club, applied=applied, member = member, members = members)
+        is_favorite = cursor.execute("SELECT * FROM favourites WHERE club_id = ? AND user_id = ?", (club_id, session["user_id"])).fetchone()
+        if is_favorite:
+            cursor.execute("DELETE FROM favourites WHERE club_id = ? AND user_id = ?", (club_id, session["user_id"]))
+            conn.commit()
+        else:
+            cursor.execute("INSERT INTO favourites (club_id, user_id) VALUES (?, ?)", (club_id, session["user_id"]))
+            conn.commit()
+        return redirect(url_for('club_details', slug=slug))
     except sqlite3.Error as e:
         return error(f"{e}", 500)
     finally:
         conn.close()
 
+"""
+If you want to hide the slug from the URL, 
+you can still pass it as a form parameter 
+or in the query string instead of directly 
+in the URL path (commented lines below)
+"""	
+@app.route('/club/<slug>', methods=['GET', 'POST'])
+def club_details(slug):
+    # slug = request.args.get('slug')
+    # ...in the page that you can access the club details:
+    # redirect_url = '/club?slug=' + item['slug']
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Fetch the internal club ID using the slug
+        club = cursor.execute("SELECT * FROM clubs WHERE slug = ?", (slug,)).fetchone()
+        if not club:
+            return error("Club not found", 404)
+        club_id = club['id']
+
+        if request.method == 'POST':
+            cursor.execute("INSERT INTO applications (club_id, app_id) VALUES (?, ?)",
+                                                     (club_id, session["user_id"]))
+            conn.commit()
+            return redirect(url_for('club_details', slug=slug))
+
+        applications = cursor.execute("SELECT * FROM applications WHERE app_id = ? AND club_id = ?", (session["user_id"], club_id)).fetchone()
+        applied = bool(applications)
+        
+        members = cursor.execute("SELECT * FROM members WHERE club_id = ? AND user_id = ?", (club_id, session["user_id"])).fetchone()
+        member = bool(members)
+
+        favourite = cursor.execute("SELECT * FROM favourites WHERE user_id = ? AND club_id = ?", (session["user_id"], club_id,)).fetchone()
+        favourites = bool(favourite)
+
+        return render_template('club.html', club=club, applied=applied, member=member, members=members, favourites=favourites)
+    except sqlite3.Error as e:
+        return error(f"{e}", 500)
+    finally:
+        conn.close()
 
 @app.route('/create', methods=['GET', 'POST'])
 @login_required
@@ -127,12 +159,12 @@ def create():
         try:
             conn = get_db_connection()
             cursor = conn.cursor()
-            
+            slug = generate_slug(name)
             # Insert the new club into the clubs table
             cursor.execute("""
-                INSERT INTO clubs (name, description, category, leader_id, school, goal) 
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (name, description, category, session["user_id"], school, goal))
+                INSERT INTO clubs (name, description, category, leader_id, school, goal, slug) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (name, description, category, session["user_id"], school, goal, slug))
 
              # Get the id of the newly inserted club
             club_id = cursor.lastrowid
@@ -197,7 +229,7 @@ def edit_club():
         # Handle photo upload if a file is provided
         if photo and allowed_file(photo.filename):
             photo_filename = secure_filename(photo.filename)
-            photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
+            photo_path = os.path.join(CLUB_PROFILE_PICTURES, photo_filename)
             photo.save(photo_path)
             cursor.execute("""
                 UPDATE clubs 
@@ -300,9 +332,9 @@ def members():
     finally:
         conn.close()
 
-@app.route('/profile')
+@app.route('/manage')
 @login_required
-def profile():
+def manage():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -317,12 +349,36 @@ def profile():
 
         owned = cursor.execute("SELECT * FROM clubs WHERE leader_id = ?", (session["user_id"],)).fetchall()
 
-        return render_template("profile.html", user=user, joined = joined, owned = owned)
+        return render_template("manage.html", user=user, joined = joined, owned = owned)
     except sqlite3.Error as e:
         return error(f"{e}", 500)
     finally:
         conn.close()
     
+@app.route('/profile/<slug>')
+@login_required
+def profile(slug):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        user = cursor.execute("SELECT * FROM users WHERE slug = ?", (slug,)).fetchone()
+        joined = cursor.execute("""
+                                    SELECT c.* 
+                                    FROM clubs c 
+                                    JOIN members m ON c.id = m.club_id 
+                                    WHERE m.user_id = ?
+                                """, (user["id"],)).fetchall()
+        
+
+        owned = cursor.execute("SELECT * FROM clubs WHERE leader_id = ?", (user["id"],)).fetchall()
+
+        return render_template("profile.html", user=user, joined=joined, owned=owned)
+    except sqlite3.Error as e:
+        return error(f"{e}", 500)
+    finally:
+        conn.close()
+
+
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
@@ -364,7 +420,7 @@ def settings():
             # Handle photo upload if a file is provided
             if photo and allowed_file(photo.filename):
                 photo_filename = secure_filename(photo.filename)
-                photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
+                photo_path = os.path.join(USER_PROFILE_PICTURES, photo_filename)
                 photo.save(photo_path)
                 cursor.execute("""
                     UPDATE users 
@@ -419,6 +475,7 @@ def login():
                 return error("Invalid username and/or password", 400)
 
             session["user_id"] = rows["id"]
+            session["slug"] = rows["slug"]
             return redirect("/")
         
         except sqlite3.Error as e:
@@ -489,12 +546,14 @@ def register():
         hash = generate_password_hash(password)
         
         try:
-            cursor.execute("INSERT INTO users (name, surname, username, email, password, region, school) VALUES (?, ?, ?, ?, ?, ?, ?);",
-                                              (name, surname, username, email, hash,     region, school))
+            slug = generate_slug(username)
+            cursor.execute("INSERT INTO users (name, surname, username, email, password, region, school, slug) VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+                                              (name, surname, username, email, hash,     region, school, slug))
             conn.commit()
 
-            user = cursor.execute("SELECT id FROM users WHERE username = ?", (username,)).fetchone()
+            user = cursor.execute("SELECT id, slug FROM users WHERE username = ?", (username,)).fetchone()
             session["user_id"] = user["id"]
+            session["slug"] = user["slug"]
             return redirect("/")
         
         except sqlite3.Error as e:

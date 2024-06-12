@@ -15,9 +15,9 @@
         <div class="mb-3 d-flex align-items-center">
             <div class="profile-picture-container mr-4">
                 <img src="{% if user['photo'] is none %}
-                                {{ url_for('static', filename='files/jive-sgroup-default-portrait-large.png') }}
+                                {{ url_for('static', filename='files/system_pictures/jive-sgroup-default-portrait-large.png') }}
                             {% else %}
-                                {{ url_for('static', filename='files/' + user['photo']) }}
+                                {{ url_for('static', filename='files/user_profile_pictures/' + user['photo']) }}
                             {% endif %}" 
                     alt="Profile Picture" class="profile-picture">
                 <input type="file" id="photo" name="photo" accept="image/*" class="profile-picture-input">

@@ -10,37 +10,15 @@
 
 {% block main %}
 <div class="without-underline">
-    <div class="text-center"> 
-        <h2>{{user["name"]}} {{user["surname"]}}</h2>
-    </div>
-    
-    <div class="d-flex justify-content-center">    
-        <div class="profile-picture-container mr-4">
-            <img src="{% if user['photo'] is none %}
-                            {{ url_for('static', filename='files/system_pictures/jive-sgroup-default-portrait-large.png') }}
-                        {% else %}
-                            {{ url_for('static', filename='files/user_profile_pictures/' + user['photo']) }}
-                        {% endif %}" 
-                alt="Profile Picture" class="profile-picture">
-        </div>  
-        <ul>
-            <li>username: {{user["username"]}}</li>
-            <li>email: {{user["email"]}}</li>
-            <li>region: {{user["region"]}}</li>
-            <li>Student from {{user["school"]}}</li>
-        </ul> 
-    </div> 
-
     <hr>
-    
-    {% if not owned %}
-        <h4>HASN'T LEAD A CLUB YET...</h4>
-        <p>Feel free to create clubs of your interest <em><strong><a href="/create">here</a></strong> </em></p> 
+    {% if not joined %}
+        <h4>YOU HAVE NOT JOINED A CLUB YET...</h4>
+        <p>Feel free to find clubs of your interest <em><strong><a href="/">here</a></strong> </em></p> 
     {% else %}
-    <h4>LEADER OF THESE CLUBS</h4>
+    <h4>YOUR MEMBERSHIP IN CLUBS</h4>
     <div class="overflow-auto">
         <div class="row flex-nowrap">
-            {% for club in owned %}
+            {% for club in joined %}
                 <a href="/club/{{ club['slug'] }} " class="col-md-4 mb-3">
                     <div class="card text-white bg-dark">
                         <img class="card-img-top" src="
@@ -66,22 +44,38 @@
         
         <div class="manage-clubs">
             
-            {% if not joined %}
-            <h4>HASN'T JOINED A CLUB YET...</h4> 
-            <p>Feel free to find clubs of your interest <em><strong><a href="/">here</a></strong> </em></p> 
+            {% if not owned %}
+            <h4>YOU HAVE NOT CREATED A CLUB YET...<h4> 
+            <p>Feel free to create clubs of your interest <em><strong><a href="/create">here</a></strong> </em></p> 
             {% else %} 
-            <h4>MEMBER OF THESE CLUBS</h4>
-                {% for club in joined %}  
-                <a href="/club/{{ club['slug'] }} ">  
+            <h4>YOUR LEADERSHIP IN CLUBS</h4>
+                {% for club in owned %}    
                     <div class="club-row row">
                         
                         <div class="col-9 ">
                             <h5 class="card-title text-truncate-1-line">{{ club["name"] }}</h5>
                         </div>
 
+                        <div class="col-2">
+                            <form action="/members" method="post">
+                                <input type="hidden" name="club" value="{{ club['id'] }}">
+                                <button type="submit" class="btn btn-link">
+                                    <img src="static\files\system_pictures\983470-200.png" class="img-edit">
+                                </button>
+                            </form>
+                            
+                        </div>
+
+                        <div class="col-1">
+                            <form action="/edit" method="post">
+                                <input type="hidden" name="club" value="{{ club['id'] }}">
+                                <button type="submit" class="btn btn-link">
+                                    <img src="static\files\system_pictures\32355.png" class="img-edit">
+                                </button>
+                            </form>
+                        </div>
 
                     </div>
-                </a>
                 {% endfor %}
             {% endif %}  
         </div>
