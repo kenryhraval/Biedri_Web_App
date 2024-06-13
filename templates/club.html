@@ -57,7 +57,7 @@
                         <strong>You are a member since</strong> {{ members["date"] }} 
                     {% else %}
                         {% if applied is false %}
-                        <form action="/club/{{ club['id'] }}" method="post">
+                        <form action="/club/{{ club['slug'] }}" method="post">
                             <button type="submit" class="btn btn-primary">Apply</button>
                         </form>
                         {% else %}

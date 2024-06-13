@@ -7,6 +7,11 @@
 {% block main %}
 
 <div class="space-below">
+    
+    <div class="text-center space-below"> 
+        <h2>{{club['name']}}</h2>
+    </div>
+    
     <h4>MEMBERS</h4> 
 
     <table class="table table-striped">
@@ -50,7 +55,7 @@
 
 <div class="space-below">
     <h4>APPLICATIONS</h4> 
-    {% if not aplications %}
+    {% if not applications %}
     <p>YOU HAVE NO PENDING APPLICATIONS...</p>
     <p><em>Your club is visible for other users <strong><a href="/">here</a></strong> </em></p> 
     {% else %}
@@ -97,6 +102,17 @@
         </tbody>
     </table>
     {% endif %}
+
+    
+</div>
+
+<div class="d-flex justify-content-center">
+    <form action="/delete_club" method="post" >
+        <input type="hidden" name="club" value="{{ club['id'] }}">
+        <button type="submit" class="btn btn-primary">
+            DELETE CLUB
+        </button>
+    </form>
 </div>
 
 {% endblock %}

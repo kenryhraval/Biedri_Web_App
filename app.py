@@ -61,9 +61,10 @@ def index():
         cursor = conn.cursor()
         query = """
             SELECT clubs.*, 
-                   (SELECT COUNT(*) FROM members WHERE members.club_id = clubs.id) AS amount
+                   (SELECT COUNT(*) FROM members WHERE members.club_id = clubs.id AND (SELECT deleted_at FROM users WHERE users.id = members.user_id) IS NULL) AS amount
             FROM clubs
             WHERE clubs.id NOT IN (SELECT club_id FROM members WHERE user_id = ?)
+                AND clubs.deleted_at IS NULL
         """
         items = cursor.execute(query, (session["user_id"],)).fetchall()
         return render_template("index.html", items=items)
@@ -309,7 +310,8 @@ def members():
             INNER JOIN 
                 users ON applications.app_id = users.id 
             WHERE 
-                applications.club_id = ?""", (club_id,)).fetchall()
+                applications.club_id = ? 
+                AND users.deleted_at IS NULL""", (club_id,)).fetchall()
 
         
 
@@ -322,7 +324,8 @@ def members():
             INNER JOIN 
                 users ON members.user_id = users.id 
             WHERE 
-                members.club_id = ?""", (club_id,)).fetchall()
+                members.club_id = ?
+                AND users.deleted_at IS NULL""", (club_id,)).fetchall()
 
 
 
@@ -344,10 +347,11 @@ def manage():
                                     FROM clubs c 
                                     JOIN members m ON c.id = m.club_id 
                                     WHERE m.user_id = ?
+                                        AND c.deleted_at IS NULL
                                 """, (session["user_id"],)).fetchall()
         
 
-        owned = cursor.execute("SELECT * FROM clubs WHERE leader_id = ?", (session["user_id"],)).fetchall()
+        owned = cursor.execute("SELECT * FROM clubs WHERE leader_id = ? AND deleted_at IS NULL", (session["user_id"],)).fetchall()
 
         return render_template("manage.html", user=user, joined = joined, owned = owned)
     except sqlite3.Error as e:
@@ -367,10 +371,11 @@ def profile(slug):
                                     FROM clubs c 
                                     JOIN members m ON c.id = m.club_id 
                                     WHERE m.user_id = ?
+                                        AND c.deleted_at IS NULL
                                 """, (user["id"],)).fetchall()
         
 
-        owned = cursor.execute("SELECT * FROM clubs WHERE leader_id = ?", (user["id"],)).fetchall()
+        owned = cursor.execute("SELECT * FROM clubs WHERE leader_id = ? AND deleted_at IS NULL", (user["id"],)).fetchall()
 
         return render_template("profile.html", user=user, joined=joined, owned=owned)
     except sqlite3.Error as e:
@@ -473,6 +478,8 @@ def login():
             rows = cursor.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
             if not check_password_hash(rows["password"], password):
                 return error("Invalid username and/or password", 400)
+            if rows["deleted_at"]:
+                return error("Profile is deleted", 400)
 
             session["user_id"] = rows["id"]
             session["slug"] = rows["slug"]
@@ -568,6 +575,41 @@ def logout():
     session.clear()
     return redirect("/")
 
+@app.route('/delete_user', methods=['POST'])
+def delete_user():
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        cursor.execute("UPDATE users SET deleted_at=? WHERE id = ?", (date, session["user_id"],))
+        conn.commit()
+
+        session.clear()
+
+        return redirect("/")
+    except sqlite3.Error as e:
+        return error(f"{e}", 500)
+    finally:
+        conn.close()
+
+@app.route('/delete_club', methods=['POST'])
+def delete_club():
+    try:
+        club = request.form['club']
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        cursor.execute("UPDATE clubs SET deleted_at=? WHERE id = ?", (date, club,))
+        conn.commit()
+
+        return redirect("/manage")
+    except sqlite3.Error as e:
+        return error(f"{e}", 500)
+    finally:
+        conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True)
