@@ -229,20 +229,23 @@ def edit_club():
         
         # Handle photo upload if a file is provided
         if photo and allowed_file(photo.filename):
+            current_photo_filename = cursor.execute("SELECT photo FROM clubs WHERE clubs.id = ?", (club_id,)).fetchone()['photo']
+                
             photo_filename = secure_filename(photo.filename)
             photo_path = os.path.join(CLUB_PROFILE_PICTURES, photo_filename)
             photo.save(photo_path)
-            cursor.execute("""
-                UPDATE clubs 
-                SET photo=? 
-                WHERE id=?
-            """, (photo_filename, club_id))
+            cursor.execute("""UPDATE clubs SET photo=? WHERE id=?""", (photo_filename, club_id))
+
+            if current_photo_filename and current_photo_filename != photo_filename:
+                current_photo_path = os.path.join(CLUB_PROFILE_PICTURES, current_photo_filename)
+                if os.path.exists(current_photo_path):
+                    os.remove(current_photo_path)
         elif photo:
             return error("Invalid file type", 400)
 
         conn.commit()
         
-        return redirect("/profile")
+        return redirect(url_for('profile', slug=session['slug']))
         
     except sqlite3.Error as e:
         return error(f"{e}", 500)
@@ -424,18 +427,22 @@ def settings():
             
             # Handle photo upload if a file is provided
             if photo and allowed_file(photo.filename):
+                current_photo_filename = cursor.execute("SELECT photo FROM users WHERE id = ?", (session["user_id"],)).fetchone()['photo']
+                
                 photo_filename = secure_filename(photo.filename)
                 photo_path = os.path.join(USER_PROFILE_PICTURES, photo_filename)
                 photo.save(photo_path)
-                cursor.execute("""
-                    UPDATE users 
-                    SET photo=? 
-                    WHERE id=?
-                """, (photo_filename, session["user_id"]))
+                cursor.execute("""UPDATE users SET photo=? WHERE id=?""", (photo_filename, session["user_id"]))
+                conn.commit()
+
+                if current_photo_filename and current_photo_filename != photo_filename:
+                    current_photo_path = os.path.join(USER_PROFILE_PICTURES, current_photo_filename)
+                    if os.path.exists(current_photo_path):
+                        os.remove(current_photo_path)
             elif photo:
                 return error("Invalid file type", 400)
             
-            conn.commit()
+            
 
             return redirect(url_for('index'))
         except sqlite3.Error as e:
