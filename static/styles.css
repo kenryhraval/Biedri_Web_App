@@ -1,5 +1,18 @@
 /* Custom CSS styles */
 
+/* For new clubs in index.html */
+.bg-blue{
+    background-color: #05b43f !important;
+    color: #fff !important;
+}
+
+/* For favorites in index.html */
+.red-border {
+    border: 7px solid rgb(216, 134, 2) !important; 
+    border-radius: 0.25rem !important; 
+    box-sizing: border-box;
+}
+
 /* FOR NAVBAR */
 .bg-custom {
     background-color: rgb(216, 134, 2);

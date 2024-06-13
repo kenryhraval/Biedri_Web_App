@@ -67,7 +67,10 @@ def index():
                 AND clubs.deleted_at IS NULL
         """
         items = cursor.execute(query, (session["user_id"],)).fetchall()
-        return render_template("index.html", items=items)
+        favorites = cursor.execute("SELECT club_id FROM favourites WHERE user_id = ?", (session["user_id"],)).fetchall()
+        favorites = [fav['club_id'] for fav in favorites]
+
+        return render_template("index.html", items=items, favorites=favorites)
     except sqlite3.Error as e:
         return error(f"{e}", 500)
     finally:

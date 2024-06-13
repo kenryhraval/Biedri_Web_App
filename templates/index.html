@@ -12,7 +12,16 @@
         {% for item in items %}
         <div class="col-md-4 mb-3">
             <a href="{{ url_for('club_details', slug=item['slug']) }}">
-                <div class="card text-white bg-dark ">
+                <div class="card text-white
+                    {% if item['amount'] == 1 %}
+                        bg-blue
+                    {% else %}
+                        bg-dark
+                    {% endif %}
+                    {% if item['id'] in favorites %}
+                        red-border
+                    {% endif %}
+                ">
                     <div class="category-box text-truncate-1-line">{{ item["category"] }}</div>
                     <img class="card-img-top" src="
                     {% if item['photo'] is none or item['photo'] == '' %}
@@ -31,7 +40,7 @@
                             {% else %}
                             fellow
                             {% endif %}
-                            <small class="text-muted ">@ {{ item["school"] }}</small>
+                            <small >@ {{ item["school"] }}</small>
                         </p>
                     </div>
                 </div>
