@@ -2,7 +2,7 @@
 
 /* For new clubs in index.html */
 .bg-green{
-    background-color: #208642 !important;
+    background-color: #4193bf !important;
     color: #fff !important;
     /* border: 5px solid #208642 !important; 
     border-radius: 0.25rem !important; 
@@ -13,7 +13,7 @@
     /* border: 5px solid rgb(60, 59, 59) !important; 
     border-radius: 0.25rem !important; 
     box-sizing: border-box; */
-    background-color: rgb(60, 59, 59) !important;
+    background-color: rgb(92, 91, 91) !important;
     color: #fff !important;
 }
 
@@ -22,8 +22,12 @@
     /* border: 5px solid rgb(172, 119, 34) !important; 
     border-radius: 0.25rem !important; 
     box-sizing: border-box; */
-    background-color: rgb(172, 119, 34) !important;
+    background-color: rgb(204, 145, 49) !important;
     color: #fff !important;
+}
+
+.list-group-item-action.active {
+    background-color: #4193bf !important;
 }
 
 /* FOR NAVBAR */
@@ -271,3 +275,7 @@ h4 {
     
 }
 
+/* body {
+    background-color: #ffe89d !important;
+    
+} */
