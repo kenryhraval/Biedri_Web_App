@@ -139,6 +139,40 @@ def club_details(slug):
     finally:
         conn.close()
 
+@app.route('/map')
+@login_required
+def map():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        query = """
+            SELECT *
+            FROM clubs
+            WHERE deleted_at IS NULL
+        """
+        cursor.execute(query)
+        
+        # Convert SQLite Row objects to list of dictionaries
+        clubs = []
+        for row in cursor.fetchall():
+            club = {
+                'name': row['name'],
+                'school': row['school'],
+                'latitude': row['latitude'],
+                'longitude': row['longitude'],
+                'category': row['category'],
+                'slug': row['slug']
+            }
+            clubs.append(club)
+
+        return render_template('map.html', clubs=clubs)
+    except sqlite3.Error as e:
+        return error(f"{e}", 500)
+    finally:
+        conn.close()
+
+
+
 @app.route('/create', methods=['GET', 'POST'])
 @login_required
 def create():
@@ -147,7 +181,9 @@ def create():
         description = request.form.get('description')
         category = request.form.get('category')
         goal = request.form.get('goal')
-        school = request.form.get('school')
+        school = request.form.get('address')
+        latitude = request.form.get('latitude')
+        longitude = request.form.get('longitude')
 
         if not name:
             return error("Must provide a name", 400)
@@ -159,6 +195,8 @@ def create():
             return error("Must provide a goal", 400)
         elif not school:
             return error("Must provide a school", 400)
+        elif not latitude or not longitude:
+            return error("Must select a location on the map", 400)
 
         try:
             conn = get_db_connection()
@@ -166,11 +204,11 @@ def create():
             slug = generate_slug(name)
             # Insert the new club into the clubs table
             cursor.execute("""
-                INSERT INTO clubs (name, description, category, leader_id, school, goal, slug) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            """, (name, description, category, session["user_id"], school, goal, slug))
+                INSERT INTO clubs (name, description, category, leader_id, school, goal, slug, latitude, longitude) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (name, description, category, session["user_id"], school, goal, slug, latitude, longitude))
 
-             # Get the id of the newly inserted club
+            # Get the id of the newly inserted club
             club_id = cursor.lastrowid
 
             # Insert the current user as a member with the role "leader"

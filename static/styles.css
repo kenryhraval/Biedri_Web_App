@@ -1,16 +1,29 @@
 /* Custom CSS styles */
 
 /* For new clubs in index.html */
-.bg-blue{
-    background-color: #05b43f !important;
+.bg-green{
+    background-color: #208642 !important;
+    color: #fff !important;
+    /* border: 5px solid #208642 !important; 
+    border-radius: 0.25rem !important; 
+    box-sizing: border-box; */
+}
+
+.bg-gray {
+    /* border: 5px solid rgb(60, 59, 59) !important; 
+    border-radius: 0.25rem !important; 
+    box-sizing: border-box; */
+    background-color: rgb(60, 59, 59) !important;
     color: #fff !important;
 }
 
 /* For favorites in index.html */
-.red-border {
-    border: 7px solid rgb(216, 134, 2) !important; 
+.bg-orange {
+    /* border: 5px solid rgb(172, 119, 34) !important; 
     border-radius: 0.25rem !important; 
-    box-sizing: border-box;
+    box-sizing: border-box; */
+    background-color: rgb(172, 119, 34) !important;
+    color: #fff !important;
 }
 
 /* FOR NAVBAR */

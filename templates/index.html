@@ -6,26 +6,29 @@
 
 {% block main %}
 <div class="without-underline">
-    <h2>Explore Clubs</h2> 
+    <h2>Explore All Clubs</h2> 
     <hr>
     <div class="row">
         {% for item in items %}
         <div class="col-md-4 mb-3">
             <a href="{{ url_for('club_details', slug=item['slug']) }}">
                 <div class="card text-white
-                    {% if item['amount'] == 1 %}
-                        bg-blue
-                    {% else %}
-                        bg-dark
-                    {% endif %}
+                    
                     {% if item['id'] in favorites %}
-                        red-border
+                        bg-orange
+                    {% else %}
+                        {% if item['amount'] == 1 %}
+                            bg-green
+                        {% else %}
+                            bg-gray
+                        {% endif %}
                     {% endif %}
+                
                 ">
                     <div class="category-box text-truncate-1-line">{{ item["category"] }}</div>
                     <img class="card-img-top" src="
                     {% if item['photo'] is none or item['photo'] == '' %}
-                        {{ url_for('static', filename='files/club_profile_pictures/jive-sgroup-default-portrait-large.png') }}
+                        {{ url_for('static', filename='files/system_pictures/jive-sgroup-default-portrait-large.png') }}
                     {% else %}
                         {{ url_for('static', filename='files/club_profile_pictures/' + item['photo']) }}
                     {% endif %}

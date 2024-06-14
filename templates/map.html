@@ -1,0 +1,110 @@
+{% extends "layout.html" %}
+
+{% block additional_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script id="clubs-data" type="application/json">
+    {{ clubs | tojson | safe }}
+</script>
+{% endblock %}
+
+{% block title %}
+    Explore Clubs Nearby
+{% endblock %}
+
+{% block main %}
+<div class="without-underline">
+    <h2>Explore Clubs Nearby</h2>
+    <hr>
+    <div id="map" style="height: 500px;"></div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', (event) => {
+    var map = L.map('map');
+
+    // Set up the OSM layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Function to initialize map with user's geolocation
+    function initMapWithGeolocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    var userLat = position.coords.latitude;
+                    var userLng = position.coords.longitude;
+                    var userZoom = 13;
+
+                    // Center map on user's location
+                    map.setView([userLat, userLng], userZoom);
+
+                    // Fetch clubs data from Flask template variable using data attribute
+                    var clubsDataElement = document.getElementById('clubs-data');
+                    if (clubsDataElement) {
+                        var clubs = JSON.parse(clubsDataElement.textContent);
+
+                        // Add markers for each club
+                        clubs.forEach(function (club) {
+                            var marker = L.marker([club.latitude, club.longitude]).addTo(map);
+                            
+                            // Create popup content with club information
+                            var popupContent = '<b>' + club.name + '</b><br>' + club.category + '<br><a href="/club/' + club.slug + '">Club Page</a>';
+                            
+                            // Bind popup to marker
+                            marker.bindPopup(popupContent);
+                        });
+                    } else {
+                        console.error('Clubs data not found.');
+                    }
+                },
+                () => {
+                    // Handle geolocation error or denial
+                    alert('Geolocation is not available or permission denied. Using default location.');
+                    setDefaultMapView();
+                }
+            );
+        } else {
+            // Browser doesn't support Geolocation API
+            alert('Geolocation is not supported by this browser. Using default location.');
+            setDefaultMapView();
+        }
+    }
+
+    // Function to set default map view
+    function setDefaultMapView() {
+        var defaultLat = 51.505; // Default latitude
+        var defaultLng = -0.09; // Default longitude
+        var defaultZoom = 13; // Default zoom level
+
+        // Set map view to default coordinates
+        map.setView([defaultLat, defaultLng], defaultZoom);
+
+        // Fetch clubs data from Flask template variable using data attribute
+        var clubsDataElement = document.getElementById('clubs-data');
+        if (clubsDataElement) {
+            var clubs = JSON.parse(clubsDataElement.textContent);
+
+            // Add markers for each club
+            clubs.forEach(function (club) {
+                var marker = L.marker([club.latitude, club.longitude]).addTo(map);
+                
+                // Create popup content with club information
+                var popupContent = '<b>' + club.name + '</b><br>' + club.category + '<br><a href="/club/' + club.slug + '">Club Page</a>';
+                
+                // Bind popup to marker
+                marker.bindPopup(popupContent);
+            });
+        } else {
+            console.error('Clubs data not found.');
+        }
+    }
+
+    // Initialize map with geolocation or default view
+    initMapWithGeolocation();
+});
+
+</script>
+
+{% endblock %}

@@ -1,5 +1,11 @@
 {% extends "layout.html" %}
 
+{% block additional_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+{% endblock %}
+
 {% block title %}
     Create Club
 {% endblock %}
@@ -54,14 +60,18 @@
         </div>
 
         <div class="mb-3">
-            <input autocomplete="off" class="form-control" name="school" placeholder="Place of Action" type="text" required>
+            <input autocomplete="off" type="text" class="form-control" name="address" id="address" placeholder="Enter address" required>
             <div class="valid-feedback">
                 Looks good!
             </div>
             <div class="invalid-feedback">
-                Please provide a school.
+                Please provide an address.
             </div>
         </div>
+        
+        <div id="map" style="height: 200px; margin: 50px 0px 50px 0px"></div>
+        <input type="hidden" name="latitude" id="latitude">
+        <input type="hidden" name="longitude" id="longitude">
           
 
         <div class="form-group">
@@ -79,25 +89,103 @@
         <button class="btn btn-primary" type="submit">Create</button>
       </form>
   </div>
-  
-  <script>
-      // Example starter JavaScript for disabling form submissions if there are invalid fields
-      (function() {
+
+<script>
+
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function() {
+  'use strict';
+  window.addEventListener('load', function() {
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.getElementsByClassName('needs-validation');
+    // Loop over them and prevent submission
+    var validation = Array.prototype.filter.call(forms, function(form) {
+      form.addEventListener('submit', function(event) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  }, false);
+})();
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    var map = L.map('map');
+
+    // Check if geolocation is available
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+
+                // Initialize the map with user's location
+                map.setView([lat, lng], 13);
+
+                // Set up the OSM layer
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+
+                var marker = L.marker([lat, lng], {
+                    draggable: true // Make the marker draggable
+                }).addTo(map);
+
+                // Event listener for marker dragend
+                marker.on('dragend', function (e) {
+                    var newLat = marker.getLatLng().lat;
+                    var newLng = marker.getLatLng().lng;
+                    document.getElementById('latitude').value = newLat;
+                    document.getElementById('longitude').value = newLng;
+                });
+
+                // Set the hidden input values to the initial latitude and longitude
+                document.getElementById('latitude').value = lat;
+                document.getElementById('longitude').value = lng;
+            },
+            () => {
+                // Handle errors if geolocation is not available or user denies permission
+                alert('Geolocation is not available or permission denied.');
+                // Fallback to a default location
+                map.setView([51.505, -0.09], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+            }
+        );
+    } else {
+        // Browser doesn't support Geolocation API
+        alert('Geolocation is not supported by this browser.');
+        // Fallback to a default location
+        map.setView([51.505, -0.09], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+    }
+
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function () {
         'use strict';
-        window.addEventListener('load', function() {
-          // Fetch all the forms we want to apply custom Bootstrap validation styles to
-          var forms = document.getElementsByClassName('needs-validation');
-          // Loop over them and prevent submission
-          var validation = Array.prototype.filter.call(forms, function(form) {
-            form.addEventListener('submit', function(event) {
-              if (form.checkValidity() === false) {
-                event.preventDefault();
-                event.stopPropagation();
-              }
-              form.classList.add('was-validated');
-            }, false);
-          });
+        window.addEventListener('load', function () {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
         }, false);
-      })();
-   </script>
+    })();
+});
+
+</script>
+  
+
 {% endblock %}

@@ -45,7 +45,7 @@
                     <div class="card text-white bg-dark">
                         <img class="card-img-top" src="
                             {% if club['photo'] is none %}
-                                {{ url_for('static', filename='files/club_profile_pictures/jive-sgroup-default-portrait-large.png') }}
+                                {{ url_for('static', filename='files/system_pictures/jive-sgroup-default-portrait-large.png') }}
                             {% else %}
                                 {{ url_for('static', filename='files/club_profile_pictures/' + club['photo']) }}
                             {% endif %}
