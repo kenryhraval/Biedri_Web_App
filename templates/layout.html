@@ -19,34 +19,53 @@
 </head>
 
 <body>
-    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-custom">
+    <nav class="navbar sticky-top navbar-expand navbar-dark bg-custom">
         <div class="container">
             <a class="navbar-brand" href="/">Biedri App</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
+            </button> -->
+            <!-- <div class="collapse navbar-collapse" id="navbarNav"> -->
                 {% if session["user_id"] %}
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/map">Map</a>
+                        <a class="nav-link" href="/map">
+                            <img src="{{ url_for('static', filename='files/system_pictures/icons8-marker-50.png') }}" class="img-icon">
+                            Map
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('profile', slug = session['slug']) }}">Profile</a>
+                        <a class="nav-link" href="/manage">
+                            <img src="{{ url_for('static', filename='files/system_pictures/icons8-control-100.png') }}" class="img-icon">
+                            User
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/manage">Manage</a>
-                    </li>
-                    <li class="nav-item dropdown ">
+                    
+                    <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <!-- <img src="{{ url_for('static', filename='files/system_pictures/icons8-more-100.png') }}" class="img-icon"> -->
+                            <img style="width: 0;" class="img-icon">
                             More
                         </a>
-                        <div class="dropdown-menu custom-dropdown bg-normal" aria-labelledby="navbarDropdown">
-                            <a class="nav-link" href="/create">Create</a>
-                            <a class="nav-link" href="/settings">Settings</a>
-                        <div class="dropdown-divider"></div>
-                            <a class="nav-link" href="/logout">Log Out</a>
+                        <div class="dropdown-menu bg-normal dropdown-menu-right" aria-labelledby="navbarDropdown">
+                            <a class="nav-link" href="{{ url_for('profile', slug = session['slug']) }}">
+                                <img src="{{ url_for('static', filename='files/system_pictures/icons8-user-24.png') }}" class="icon">
+                                Profile
+                            </a>
+                            <a class="nav-link" href="/create">
+                                <img src="{{ url_for('static', filename='files/system_pictures/icons8-create-64.png') }}" class="icon">  
+                                 Create
+                            </a>
+                            <a class="nav-link" href="/settings">
+                                <img src="{{ url_for('static', filename='files/system_pictures/icons8-settings-500.png') }}" class="icon">  
+                                 Settings
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="nav-link" href="/logout">
+                                <img src="{{ url_for('static', filename='files/system_pictures/icons8-logout-64.png') }}" class="icon">  
+                                 Logout
+                            </a>
                         </div>
                     </li>
                 </ul>
@@ -60,7 +79,7 @@
                     </li>
                 </ul>
                 {% endif %}
-            </div>
+            <!-- </div> -->
         </div>
     </nav>
     

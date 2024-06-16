@@ -1,15 +1,25 @@
 /* Custom CSS styles */
+:root {
+    /* Define color variables */
+    --primary-color: rgb(116, 6, 120);
+    --primary-color-faded: rgba(116, 6, 120, 0.523);
+    --normal-color: #3a3a3a;
+    --normal-color-faded: #3a3a3a7e;
+    --new-color: #73b649;
+    --new-color-faded: #73b64983;
+    --favorite-color: rgba(204, 49, 49);
+    --favorite-color-faded: rgba(204, 49, 49, 0.473);
+}
 
 .profile-box {
-    border: 5px solid #3a3a3a;
+    border: 5px solid var(--normal-color);
     border-radius: 20px;
 }
 
 
 /* For new clubs in index.html */
 .bg-new{
-    background-color: #73b64966 !important;
-    color: #fff !important;
+    background-color: var(--new-color-faded) !important;
     /* border: 5px solid #208642 !important; 
     border-radius: 0.25rem !important; 
     box-sizing: border-box; */
@@ -17,25 +27,24 @@
 }
 
 .bg-new:hover{
-    background-color: #73b649 !important;
+    background-color: var(--new-color) !important;
 }
 
 .bg-normal {
     /* border: 5px solid rgb(60, 59, 59) !important; 
     border-radius: 0.25rem !important; 
     box-sizing: border-box; */
-    background-color: rgba(116, 6, 120, 0.333) !important;
-    color: #fff !important;
+    background-color: var(--primary-color-faded) !important;
     transition: background-color 5s ease; 
+    border-color: var(--primary-color);
 }
 
 .bg-display-box {
-    background-color: rgb(116, 6, 120) !important;
-    color: #fff !important;
+    background-color: var(--primary-color) !important;
 }
 
 .bg-normal:hover {
-    background-color: rgb(116, 6, 120) !important;
+    background-color: var(--primary-color) !important;
 }
 
 /* For favorites in index.html */
@@ -43,28 +52,27 @@
     /* border: 5px solid rgb(172, 119, 34) !important; 
     border-radius: 0.25rem !important; 
     box-sizing: border-box; */
-    background-color: rgba(204, 49, 49, 0.421) !important;
-    color: #fff !important;
+    background-color: var(--favorite-color-faded) !important;
     transition: background-color 5s ease; 
 }
 
 .bg-favorite:hover {
-    background-color: rgba(204, 49, 49) !important;
+    background-color: var(--favorite-color) !important;
 }
 
 .list-group-item-action.active {
-    background-color: #4193bf !important;
+    background-color: var(--primary-color) !important;
 }
 
 /* FOR NAVBAR */
 
 .bg-custom {
-    background-color: rgba(116, 20, 119, 0.556);
+    background-color: var(--primary-color-faded);
     transition: background-color 5s ease; 
 }
 
 .bg-custom:hover {
-    background-color: rgb(116, 6, 120);
+    background-color: var(--primary-color);
 }
 
 html {
@@ -84,7 +92,7 @@ html {
     align-items: center;
     margin: 0;
     padding: 0;
-    background-color: #431d1d;
+    background-color: var(--primary-color-faded);
 }
 .profile-picture {
     width: 100%; 
@@ -183,13 +191,17 @@ html {
     padding-bottom: 0px !important;
 }
 
+.card-container {
+    max-width: 230px !important;	
+}
+
 .custom-card-col {
     margin-right: 0 !important; 
     width: auto !important;
 }
 
 .club-row {
-    border: 1px solid #3a3a3a;
+    border: 1px solid var(--normal-color);
     height: 40px;
     margin-bottom: 20px;
     padding: 5px 5px 5px 5px;
@@ -237,7 +249,9 @@ html {
 .card {
     display: inline-block;
     width: 100%;
-    margin: 0 0 10px 0;
+    max-width: 400px;
+    margin: 0 0 10px 0 !important;
+    color: white;
     
 }
 
@@ -282,11 +296,91 @@ html {
 }
 
 
+.img-icon {
+    width: 35px; 
+    height: auto;
+    margin-left: 100px; 
+    
+}
+
+.icon {
+    width: 35px; 
+    height: auto;
+    margin-right: 10px; 
+}
+
 .center-50{
     width: 50% !important; 
     margin: 0 auto !important;
     padding-bottom: 100px;
     
+}
+
+.center-50 {
+    width: 50% !important; 
+    margin: 0 auto !important;
+    padding-bottom: 100px;
+}
+
+@media (max-width: 1500px) {
+    .center-50 {
+        width: 60% !important;
+    }
+    .form-container {
+        width: 55% !important;
+    }
+    .img-icon {
+        margin-left: 60px; 
+    }
+}
+
+@media (max-width: 1200px) {
+    .center-50 {
+        width: 65% !important;
+    }
+    .form-container {
+        width: 60% !important;
+    }
+    .img-icon {
+        margin-left: 40px; 
+    }
+}
+
+@media (max-width: 992px) {
+    .center-50 {
+        width: 70% !important;
+    }
+    .form-container {
+        width: 70% !important;
+    }
+    .img-icon {
+        margin-left: 20px; 
+    }
+}
+
+@media (max-width: 768px) {
+    .center-50 {
+        width: 80% !important;
+    }
+    .form-container {
+        width: 90% !important;
+    }
+    .img-icon {
+        margin-left: 5px !important; 
+    }
+}
+
+@media (max-width: 576px) {
+    .center-50 {
+        width: 80% !important;
+    }
+    .form-container {
+        width: 100% !important;
+    }
+    .img-icon {
+        margin-left: 0px !important; 
+        width: 0 !important; 
+    }
 }
 
 .without-underline a{
@@ -300,7 +394,7 @@ html {
 }
 
 .form-container {
-    width: 50% !important; 
+    width: 50%; 
     margin: 0 auto 100px auto !important; 
     padding: 20px !important;
     border: 1px solid #ccc !important;

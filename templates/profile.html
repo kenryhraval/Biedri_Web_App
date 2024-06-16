@@ -47,7 +47,7 @@
         <div class="row flex-nowrap">
             {% for club in owned %}
                 <a href="/club/{{ club['slug'] }} " class="col-md-4 mb-3">
-                    <div class="card text-white bg-display-box">
+                    <div class="card card-container bg-display-box">
                         <img class="card-img-top" src="
                             {% if club['photo'] is none %}
                                 {{ url_for('static', filename='files/system_pictures/jive-sgroup-default-portrait-large.png') }}

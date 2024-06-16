@@ -17,17 +17,17 @@
     </div> -->
 
     {% if not joined %}
-        <h4 class="subtitle">YOU HAVE NOT JOINED A CLUB YET...</h4>
+        <h4 class="title">YOU HAVE NOT JOINED A CLUB YET...</h4>
         <hr>
         <p>Feel free to find clubs of your interest <em><strong><a href="/">here</a></strong> </em></p> 
     {% else %}
-    <h4 class="subtitle">YOUR MEMBERSHIP IN CLUBS</h4>
+    <h4 class="title">YOUR MEMBERSHIP IN CLUBS</h4>
     <hr>
     <div class="overflow-auto">
         <div class="row flex-nowrap">
             {% for club in joined %}
                 <a href="/club/{{ club['slug'] }} " class="col-md-4 mb-3">
-                    <div class="card text-white bg-display-box">
+                    <div class="card card-container bg-display-box">
                         <img class="card-img-top" src="
                             {% if club['photo'] is none %}
                                 {{ url_for('static', filename='files/system_pictures/jive-sgroup-default-portrait-large.png') }}
@@ -60,7 +60,7 @@
                 {% for club in owned %}    
                     <div class="club-row row">
                         
-                        <div class="col-9 ">
+                        <div class="col-8 ">
                             <h5 class="card-title text-truncate-1-line">{{ club["name"] }}</h5>
                         </div>
 

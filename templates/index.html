@@ -6,14 +6,18 @@
 
 {% block main %}
 <div class="without-underline">
-    <h4 class="title">EXPLORE THE WIDE RANGE OF CLUBS</h4> 
+    <h4 class="title">EXPLORE THE ENTIRETY OF CLUBS</h4> 
     <hr>
-    <div class="row">
+    <div class="row" >
         {% for item in items %}
-        <div class="col-md-4 mb-3">
+        <!-- col-xl-3: Defines the layout for extra large screens (xl).
+            col-lg-4: Defines the layout for large screens (lg).
+            col-md-6: Defines the layout for medium screens (md).
+            col-sm-12: Defines the layout for small screens (sm).
+            col-12: Defines the layout for extra small screens (xs) -->
+        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 mb-3">
             <a href="{{ url_for('club_details', slug=item['slug']) }}">
                 <div class="card display-moving text-white
-                    
                     {% if item['id'] in favorites %}
                         bg-favorite
                     {% else %}
@@ -23,7 +27,6 @@
                             bg-normal
                         {% endif %}
                     {% endif %}
-                
                 ">
                     <div class="category-box text-truncate-1-line">{{ item["category"] }}</div>
                     <img class="card-img-top" src="
@@ -32,9 +35,8 @@
                     {% else %}
                         {{ url_for('static', filename='files/club_profile_pictures/' + item['photo']) }}
                     {% endif %}
-
                     " alt="Card image cap">
-                    <div class="card-body" >
+                    <div class="card-body">
                         <h5 class="card-title text-truncate-1-line">{{ item["name"] }}</h5>
                         <p class="card-text text-truncate-1-line">
                             {{ item["amount"] }} 
@@ -43,7 +45,7 @@
                             {% else %}
                             fellow
                             {% endif %}
-                            <small >@ {{ item["school"] }}</small>
+                            <small>@ {{ item["school"] }}</small>
                         </p>
                     </div>
                 </div>
