@@ -6,21 +6,21 @@
 
 {% block main %}
 <div class="without-underline">
-    <h2>Explore All Clubs</h2> 
+    <h4 class="title">EXPLORE THE WIDE RANGE OF CLUBS</h4> 
     <hr>
     <div class="row">
         {% for item in items %}
         <div class="col-md-4 mb-3">
             <a href="{{ url_for('club_details', slug=item['slug']) }}">
-                <div class="card text-white
+                <div class="card display-moving text-white
                     
                     {% if item['id'] in favorites %}
-                        bg-orange
+                        bg-favorite
                     {% else %}
                         {% if item['amount'] == 1 %}
-                            bg-green
+                            bg-new
                         {% else %}
-                            bg-gray
+                            bg-normal
                         {% endif %}
                     {% endif %}
                 

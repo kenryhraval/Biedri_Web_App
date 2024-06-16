@@ -1,29 +1,55 @@
 /* Custom CSS styles */
 
+.profile-box {
+    border: 5px solid #3a3a3a;
+    border-radius: 20px;
+}
+
+
 /* For new clubs in index.html */
-.bg-green{
-    background-color: #4193bf !important;
+.bg-new{
+    background-color: #73b64966 !important;
     color: #fff !important;
     /* border: 5px solid #208642 !important; 
     border-radius: 0.25rem !important; 
     box-sizing: border-box; */
+    transition: background-color 5s ease; 
 }
 
-.bg-gray {
+.bg-new:hover{
+    background-color: #73b649 !important;
+}
+
+.bg-normal {
     /* border: 5px solid rgb(60, 59, 59) !important; 
     border-radius: 0.25rem !important; 
     box-sizing: border-box; */
-    background-color: rgb(92, 91, 91) !important;
+    background-color: rgba(116, 6, 120, 0.333) !important;
+    color: #fff !important;
+    transition: background-color 5s ease; 
+}
+
+.bg-display-box {
+    background-color: rgb(116, 6, 120) !important;
     color: #fff !important;
 }
 
+.bg-normal:hover {
+    background-color: rgb(116, 6, 120) !important;
+}
+
 /* For favorites in index.html */
-.bg-orange {
+.bg-favorite {
     /* border: 5px solid rgb(172, 119, 34) !important; 
     border-radius: 0.25rem !important; 
     box-sizing: border-box; */
-    background-color: rgb(204, 145, 49) !important;
+    background-color: rgba(204, 49, 49, 0.421) !important;
     color: #fff !important;
+    transition: background-color 5s ease; 
+}
+
+.bg-favorite:hover {
+    background-color: rgba(204, 49, 49) !important;
 }
 
 .list-group-item-action.active {
@@ -31,8 +57,14 @@
 }
 
 /* FOR NAVBAR */
+
 .bg-custom {
-    background-color: rgb(216, 134, 2);
+    background-color: rgba(116, 20, 119, 0.556);
+    transition: background-color 5s ease; 
+}
+
+.bg-custom:hover {
+    background-color: rgb(116, 6, 120);
 }
 
 html {
@@ -99,10 +131,9 @@ html {
     max-width: 100%;
 }
 
-
-
-
-
+.custom-dropdown {
+    width: 10px;
+}
 
 .mb-3 label {
     text-align: left;
@@ -137,21 +168,20 @@ html {
     display: block; 
 }
 
-h2 {
-    padding-top: 10px;
-    padding-bottom: 10px;
-}
-
 .manage-container{
     padding: 40px 0 200px 0 !important;
     margin-right: 20px;
 }
 
-h4 {
-    padding-bottom: 10px;
+.subtitle {
+    padding-bottom: 0px;
+    padding-top: 50px;
 }
 
-
+.title {
+    padding-top: 10px !important;
+    padding-bottom: 0px !important;
+}
 
 .custom-card-col {
     margin-right: 0 !important; 
@@ -208,15 +238,20 @@ h4 {
     display: inline-block;
     width: 100%;
     margin: 0 0 10px 0;
-    transition: all 0.3s ease-in-out;
+    
 }
 
+.display-moving {
+    transition: all 0.5s ease-in-out;
+}
 
-.card:hover {
+.display-moving:hover {
     transform: translateX(5px);
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    /* transform: scale(1.5); */
+    /* box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); */
+    transform: scale(1.05);
 }
+
+
 
 .category-box {
     position: absolute;

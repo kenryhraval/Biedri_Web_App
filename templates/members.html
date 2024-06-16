@@ -8,12 +8,12 @@
 
 <div class="space-below">
     
-    <div class="text-center space-below"> 
-        <h2>{{club['name']}}</h2>
+    <div class="text-center"> 
+        <h2 class="title">{{club['name']}}</h2>
+        <hr>
     </div>
     
-    <h4>MEMBERS</h4> 
-
+    <h4 class="subtitle" >MEMBERS</h4> 
     <table class="table table-striped">
         <thead>
             <tr>
@@ -53,12 +53,14 @@
     </table>
 </div>
 
-<div class="space-below">
-    <h4>APPLICATIONS</h4> 
+<div class="space-below"> 
     {% if not applications %}
-    <p>YOU HAVE NO PENDING APPLICATIONS...</p>
+    <h4 class="subtitle">YOU HAVE NO PENDING APPLICATIONS...</h4>
+    <hr>
     <p><em>Your club is visible for other users <strong><a href="/">here</a></strong> </em></p> 
     {% else %}
+    <h4 class="subtitle">APPLICATIONS</h4>
+    <hr>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -105,7 +107,7 @@
 
     
 </div>
-
+<hr>
 <div class="d-flex justify-content-center">
     <form action="/delete_club" method="post" >
         <input type="hidden" name="club" value="{{ club['id'] }}">

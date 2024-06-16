@@ -10,17 +10,24 @@
 
 {% block main %}
 <div class="without-underline">
-    <hr>
+    
+    <!-- <div class="text-center"> 
+        <h2 class="title">{{user["name"]}} {{user["surname"]}}</h2>
+        <hr>
+    </div> -->
+
     {% if not joined %}
-        <h4>YOU HAVE NOT JOINED A CLUB YET...</h4>
+        <h4 class="subtitle">YOU HAVE NOT JOINED A CLUB YET...</h4>
+        <hr>
         <p>Feel free to find clubs of your interest <em><strong><a href="/">here</a></strong> </em></p> 
     {% else %}
-    <h4>YOUR MEMBERSHIP IN CLUBS</h4>
+    <h4 class="subtitle">YOUR MEMBERSHIP IN CLUBS</h4>
+    <hr>
     <div class="overflow-auto">
         <div class="row flex-nowrap">
             {% for club in joined %}
                 <a href="/club/{{ club['slug'] }} " class="col-md-4 mb-3">
-                    <div class="card text-white bg-dark">
+                    <div class="card text-white bg-display-box">
                         <img class="card-img-top" src="
                             {% if club['photo'] is none %}
                                 {{ url_for('static', filename='files/system_pictures/jive-sgroup-default-portrait-large.png') }}
@@ -30,7 +37,7 @@
                         " alt="Card image cap">
                         <div class="card-body">
                             <h5 class="card-title text-truncate-1-line">{{ club["name"] }}</h5>
-                            <p class="card-text text-truncate-1-line"><small class="text-muted ">{{ club["school"] }}</small></p>
+                            <p class="card-text text-truncate-1-line"><small>{{ club["school"] }}</small></p>
                         </div>
                     </div>
                 </a>
@@ -40,15 +47,16 @@
     {% endif %}
     
     <div class="manage-container">
-        <hr>
         
         <div class="manage-clubs">
             
             {% if not owned %}
-            <h4>YOU HAVE NOT CREATED A CLUB YET...</h4> 
+            <h4 class="subtitle">YOU HAVE NOT CREATED A CLUB YET...</h4> 
+            <hr>
             <p>Feel free to create clubs of your interest <em><strong><a href="/create">here</a></strong> </em></p> 
             {% else %} 
-            <h4>YOUR LEADERSHIP IN CLUBS</h4>
+            <h4 class="subtitle">YOUR LEADERSHIP IN CLUBS</h4>
+            <hr>
                 {% for club in owned %}    
                     <div class="club-row row">
                         
@@ -80,7 +88,7 @@
             {% endif %}  
         </div>
     </div>
-
+    <hr>
     <div class="d-flex justify-content-center">
         <form action="/delete_user" method="post" >
             <button type="submit" class="btn btn-primary">
