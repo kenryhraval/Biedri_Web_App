@@ -1,13 +1,47 @@
 # Biedri Web App
-#### Video Demo:  <URL HERE>
-#### Description:
 
-There are plenty of students who do not feel as a part of their school community, they have a lack of motivation towards learning. We believe that the root cause is the fact that they haven’t found their specific niche. The best solution for promoting a combination of theoretical knowledge, flexibility, ability to work in a team leadership, time management and communication skills is interest related education. When it comes to interest groups and student clubs, some problems have to be faced. The toughest one is accessibility. There is a narrow choice of extra-curricular activities in small towns. Secondly, it may be difficult to find fellow thinkers. Thirdly, there is a lack of knowledge for leading a group of like-minded people. But many secondary school students would like to take a part in some kind of interest club (for example, discussions, genealogy, cooking etc. – everyone has something they are passionate about). 
+#### Video Demo: [youtu.be/wQIJqAgQoG8](https://youtu.be/wQIJqAgQoG8)
 
-Seeking the solution in countries like USA, the aim is to popularize creation of like-minded clubs in Europe. But the game-changer developed as part of CS50x final project is the Biedri Web App. It is a solution for all of the previously mentioned issues and even more. The app is meant for those who are passionate about their hobby or interest field. It’s also well-suited for students who want to do something but are not sure: what exactly? 
+## Description
 
-The app is meant for registered users. Email is required for the registration (as well as users full name, region and school). In the app it is possible to create a page for your club and show your field of work (category, description, goal, address and location). A new user sees recommended clubs and can easily join them. The club leaders can accept or refuse new applicants, as well as view members' profiles, manage membership and adjust the clubs profile page. There is also a map of all existing clubs, so the student can see clubs nearby. The future development for Biedri Web App includes a group chat system for members of the same club, a page for posting club's work (a closed "social media"), a smarter recommendation algorythm for new users, and a section with tips in leadership, communication, work organisation etc. 
+Many students struggle to feel as part of their school community and lack motivation towards learning. We believe the root cause is that they haven’t found their specific niche. The best solution for promoting a combination of theoretical knowledge, flexibility, teamwork, leadership, time management, and communication skills is interest-related education.
 
-The navbar can be used to navigate throughout the webapp. By clicking the Biedri logo, you get drafted to the main page which includes all clubs. The app is responsive to different screen sizes. It is hosted online here: kenryhraval.pythonanywhere.com
+When it comes to interest groups and student clubs, several challenges arise:
 
-All in all, Biedri Web App is an interest related education supporting instrument that promotes growth of students, regional development and links between educational institutions.
+- **Accessibility:** Limited options for extra-curricular activities, especially in small towns.
+- **Finding Like-minded Individuals:** Difficulty in connecting with fellow thinkers.
+- **Leadership Knowledge:** Lack of knowledge for leading a group of like-minded people.
+
+Despite these challenges, many secondary school students want to join interest clubs, whether it's discussions, genealogy, cooking, or other passions.
+
+<p align="center">
+  <img src="static/files/system_pictures/Ekrānuzņēmums 2024-06-19 185440.png" alt="Interest Related Education">
+</p>
+
+### Solution: Biedri Web App
+
+To address these challenges, we developed the Biedri Web App as part of our CS50x final project. This app aims to popularize the creation of like-minded clubs and provides solutions for the issues mentioned above.
+
+### Key Features
+
+- **User Registration:** Register using your email, full name, region, and school.
+- **Club Creation:** Create a page for your club with details like category, description, goal, address, and location.
+- **Club Discovery:** New users see recommended clubs and can easily join them.
+- **Membership Management:** Club leaders can accept/refuse new applicants, view members' profiles, manage membership, and update the club's profile page.
+- **Club Map:** View a map of all existing clubs to find those nearby.
+- **Future Enhancements:** Group chat system, closed "social media" for club activities, smarter recommendation algorithm, and leadership tips.
+
+### Navigation
+
+The navbar allows for easy navigation throughout the web app. Clicking the Biedri logo directs you to the main page, which includes all clubs. The app is responsive to different screen sizes, ensuring a smooth user experience on any device.
+
+### Technologies Used
+
+- **Database:** SQLite for storing user and club data.
+- **Frontend:** Bootstrap for design elements and responsiveness.
+- **Mapping:** Leaflet for displaying clubs on a map.
+- **Hosting:** The app is hosted online at [kenryhraval.pythonanywhere.com](http://kenryhraval.pythonanywhere.com).
+
+### Impact
+
+Biedri Web App is an instrument that supports interest-related education, promoting growth among students, regional development, and strengthening links between educational institutions.
